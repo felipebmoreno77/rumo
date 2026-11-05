@@ -1,6 +1,6 @@
 # Rumo — login com servidor
 
-Código implementado. Projeto escolhido: Felipe Business. Hospedagem: https://timely-brioche-70b62e.netlify.app/. Publicação, configuração de e-mails e testes reais ainda pendentes.
+Código implementado. Preencha a configuração da hospedagem e do provedor de autenticação no painel da Netlify. A configuração de e-mails e os testes reais ainda precisam ser concluídos.
 Não há login fictício, senha universal nem modo de pular a confirmação.
 
 ## Publicar
@@ -11,7 +11,7 @@ Alternativamente, use o fluxo de deploy com functions da CLI oficial da Netlify.
 Não coloque arquivos de configuração secreta dentro de public.
 
 ## Configuração necessária
-Copie as três linhas de netlify.env.example para as variáveis de ambiente da Netlify (escopo Functions). A chave incluída é publishable, não é uma chave administrativa. O arquivo deve permanecer fora de public.
+O arquivo netlify.env.example contém apenas exemplos, sem os valores reais. Cadastre as três variáveis no painel da Netlify com os dados corretos do seu projeto e inclua o escopo Functions. Se elas já estiverem cadastradas, mantenha os valores existentes. Use somente a chave publishable, nunca uma chave administrativa. Não grave valores reais neste arquivo nem dentro de public.
 
 Valores:
 - APP_ORIGIN: endereço HTTPS exato do app, sem barra final, por exemplo https://seu-app.netlify.app.
