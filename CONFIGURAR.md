@@ -1,10 +1,10 @@
 # Rumo — login com servidor
 
-Código implementado. Preencha a configuração da hospedagem e do provedor de autenticação no painel da Netlify. A configuração de e-mails e os testes reais ainda precisam ser concluídos.
+O projeto já está conectado ao GitHub e publicado na Netlify. Preserve as variáveis existentes na hospedagem. As instruções abaixo também servem para uma instalação em outro ambiente. A validação completa dos fluxos reais de e-mail ainda precisa ser concluída.
 Não há login fictício, senha universal nem modo de pular a confirmação.
 
 ## Publicar
-Este pacote agora contém uma Netlify Function. Não basta arrastar a pasta para Netlify Drop.
+Este pacote contém duas Netlify Functions: autenticação e Mentor. Não basta arrastar a pasta para Netlify Drop.
 Importe os arquivos em um repositório Git e conecte-o à Netlify, com netlify.toml na raiz.
 A pasta publicada é public; netlify/functions contém o servidor.
 Alternativamente, use o fluxo de deploy com functions da CLI oficial da Netlify.
@@ -36,7 +36,8 @@ Página inicial pública. Menu, dupla, questionário e demais ações exigem log
 Depois do login, retoma a ação escolhida quando ela ainda estiver disponível.
 Cadastro → código por e-mail → confirmação → sessão.
 Esqueci a senha → código de recuperação → nova senha → login novamente.
-Sair da conta revoga a sessão corrente no provedor e elimina os cookies locais.
+Configurações > Conta conectada mostra o e-mail retornado pela sessão validada. O botão Desconectar da conta usa o mesmo logout disponível no menu.
+Sair da conta solicita a revogação da sessão corrente e elimina os cookies de autenticação. Ao receber sucesso, a interface limpa a conversa e os dados da conta em memória e volta ao início. O progresso local por conta é preservado. Se a requisição falhar, informa o erro e permite tentar novamente.
 A sessão é revalidada no servidor ao carregar a página e ao voltar à aba.
 
 ## Segurança e limites reais
@@ -62,9 +63,9 @@ A sessão é revalidada no servidor ao carregar a página e ao voltar à aba.
   provedor continuam aplicáveis. Nenhum domínio de e-mail é bloqueado pelo app.
 
 ## Verificação
-Testes de backend: node --test tests/security.cjs (Node 22).
+Testes de backend: node --test tests/security.cjs tests/mentor.cjs (Node 22).
 Teste DOM: instalar jsdom@26.1.0 num diretório auth-test-deps ao lado da pasta do projeto;
-rodar node tests/gate.cjs.
+rodar node tests/gate.cjs, node tests/mentor-ui.cjs e node tests/settings-account.cjs.
 Foram testados bloqueio de origem externa, ausência/adulteração de sessão, conta
 não confirmada, cookies protegidos, senha curta e configuração ausente.
 Teste de interface local confirmou que o menu leva ao login.
@@ -72,4 +73,4 @@ Ainda faltam testes reais de envio, recebimento, confirmação, recuperação, l
 e troca de contas em HTTPS após configurar Supabase e SMTP.
 
 ## Mentor Rumo
-Consulte MENTOR.md para ativar a integração com OpenAI. A chave fica somente na função de servidor.
+Consulte MENTOR.md para a integração com OpenAI e CREDITOS.md para o estado da compra demonstrativa. A chave fica somente no servidor.

@@ -14,5 +14,7 @@ A chave já cadastrada na hospedagem não é incluída no ZIP. As respostas reai
 DIFERENÇA DA PRÉVIA NAVEGÁVEL
 Este ZIP não contém a entrada sem senha nem as respostas fixas de demonstração da prévia completa. O login real continua obrigatório para acessar funções do app.
 
-CONFIGURACOES DA CONTA
-A secao Conta conectada mostra o e-mail retornado pela sessao validada e oferece Desconectar da conta. O logout usa o backend existente, limpa a conversa e a tela da conta e exige nova autenticacao para abrir funcionalidades.
+CONFIGURAÇÕES DA CONTA
+A seção Conta conectada mostra o e-mail retornado pela sessão validada e oferece Desconectar da conta. O logout usa o backend existente, limpa a conversa e a tela da conta e exige nova autenticação para abrir funcionalidades.
+
+O estado da compra demonstrativa e os requisitos para pagamentos reais estão em CREDITOS.md.

@@ -2,7 +2,13 @@
 
 A integração com OpenAI está implementada. Sem a chave, o app mostra um aviso e não fabrica respostas. A validação local usa respostas simuladas; uma resposta real ainda precisa ser testada depois da ativação.
 
-## Ativação na Netlify
+## Estado da instalação atual
+
+A chave já foi cadastrada como segredo na Netlify, no contexto de produção. O código a lê no servidor. A última conferência mostrou saldo zerado na OpenAI; uma resposta real ainda não foi validada. Não exponha o valor da chave em código, ZIP, logs ou documentação.
+
+A tela de pacotes anterior ao Mentor é demonstrativa. Ela não recebe pagamentos nem controla saldo comprado. Consulte CREDITOS.md.
+
+## Ativação na Netlify (instalação nova ou substituição da chave)
 
 1. Crie uma chave de API em https://platform.openai.com/api-keys, em um projeto com acesso ao modelo e faturamento/saldo configurados.
 2. Abra o projeto timely-brioche-70b62e na Netlify: Project configuration → Environment variables → Add a variable.
@@ -41,5 +47,6 @@ Com jsdom instalado em auth-test-deps ao lado da pasta do projeto:
 
 node tests/gate.cjs
 node tests/mentor-ui.cjs
+node tests/settings-account.cjs
 
 Os testes de IA usam fetch simulado e não geram cobrança. Configure limites/alertas de uso no projeto da OpenAI e monitore os custos depois de ativar.
