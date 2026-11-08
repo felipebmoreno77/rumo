@@ -1,0 +1,18 @@
+RUMO — LOGIN REAL + TELA DE CRÉDITOS
+
+Este pacote contém autenticação real, integração de IA pelo servidor e a prévia da tela de créditos antes do Mentor.
+A compra e o saldo da tela de créditos ainda são ilustrativos. Não há checkout real, liberação ou desconto de créditos pagos. O botão de prévia permite visualizar a conversa; ele não comprova pagamento. Não anuncie venda de créditos até implementar a validação no servidor.
+
+PUBLICAÇÃO NA NETLIFY
+O projeto contém Netlify Functions. Publique os arquivos pelo repositório GitHub conectado à Netlify ou pela CLI com suporte a functions. Apenas arrastar o ZIP no Netlify Drop não publica o backend de autenticação.
+Mantenha netlify.toml na raiz, public como pasta publicada e netlify/functions com os dois arquivos de servidor.
+Mantenha as variáveis já cadastradas na Netlify. Não coloque a chave OpenAI, senhas ou valores secretos no HTML ou no repositório.
+
+MENTOR
+A chave já cadastrada na hospedagem não é incluída no ZIP. As respostas reais dependem de saldo/acesso disponível na OpenAI e de validação após o deploy. Veja MENTOR.md.
+
+DIFERENÇA DA PRÉVIA NAVEGÁVEL
+Este ZIP não contém a entrada sem senha nem as respostas fixas de demonstração da prévia completa. O login real continua obrigatório para acessar funções do app.
+
+CONFIGURACOES DA CONTA
+A secao Conta conectada mostra o e-mail retornado pela sessao validada e oferece Desconectar da conta. O logout usa o backend existente, limpa a conversa e a tela da conta e exige nova autenticacao para abrir funcionalidades.

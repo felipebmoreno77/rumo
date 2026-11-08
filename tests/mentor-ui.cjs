@@ -14,7 +14,10 @@ const dom = new JSDOM(fs.readFileSync(__dirname+'/../public/index.html','utf8'),
   }
 });
 await new Promise(r=>setTimeout(r,100));const w=dom.window,d=w.document;
-d.querySelector('[data-mentor-open]').click();assert.ok(d.querySelector('#ma-draft'));
+d.querySelector('[data-mentor-open]').click();assert.ok(d.querySelector('.mc-page'));assert.equal(d.querySelector('#ma-draft'),null);
+d.querySelector('[data-mentor-pack="0"]').click();assert.equal(d.querySelector('[data-mentor-pack="0"]').getAttribute('aria-pressed'),'true');
+d.querySelector('[data-mentor-buy]').click();assert.match(d.querySelector('#mc-purchase').textContent,/Nenhum pagamento/);assert.equal(sent,undefined);
+d.querySelector('[data-mentor-preview]').click();assert.ok(d.querySelector('#ma-draft'));
 function draft(text){const input=d.querySelector('#ma-draft');input.value=text;input.dispatchEvent(new w.Event('input',{bubbles:true}))}
 draft('Meu projeto é um vídeo de música');d.querySelector('[data-mentor-action=send]').click();assert.equal(d.querySelector('[data-mentor-action=send]').disabled,true);
 await new Promise(r=>setTimeout(r,30));assert.equal(sent.message,'Meu projeto é um vídeo de música');assert.match(d.querySelector('.ma-assistant').textContent,/Ajuste a abertura/);assert.doesNotMatch(d.querySelector('.ma-assistant').textContent,/exemplo demonstrativo/);
