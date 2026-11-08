@@ -29,11 +29,13 @@ Não coloque senhas, chaves administrativas ou a chave Resend no repositório. O
 
 O código da branch main está conectado à publicação automática na Netlify. A página inicial é pública; menu, questionários e funções exigem login validado pelo servidor. Configurações mostra o e-mail da conta conectada e permite desconectar. O progresso continua local, separado por conta.
 
-O Mentor tem integração com OpenAI pelo servidor. Na conferência de 08/11/2026, a variável OPENAI_API_KEY existia na Netlify, mas estava vazia em todos os contextos. A conta OpenAI mostrava US$ 0,00; uma resposta real ainda não foi validada. Falta cadastrar uma chave válida e adicionar saldo. Nunca inclua o valor da chave no repositório.
+O Mentor tem integração com OpenAI pelo servidor. Em 08/11/2026, foi criada uma chave dedicada de conta de serviço, restrita à API de respostas, com expiração em 08/12/2026. Ela foi salva como segredo OPENAI_API_KEY apenas no contexto Production da Netlify. O segredo RUMO_CREDIT_SERVER_TOKEN também foi salvo em Production; somente seu hash SHA-256 fica no banco privado.
+
+As alterações de variáveis exigem novo deploy. A Netlify informa que as publicações de produção estão pausadas por esgotamento dos créditos do plano; o ciclo atual termina em 19/11/2026. O site já publicado continua online. A conta OpenAI ainda mostra US$ 0,00 e nenhuma resposta real foi validada. Falta liberar uma publicação, adicionar saldo OpenAI e testar o Mentor. Nunca incluir os segredos no repositório.
 
 O Pix manual tem pedidos, saldo por conta, painel exclusivo do responsável e reserva de um crédito por resposta do Mentor. Informar pagamento não libera saldo; a aprovação exige conferir o extrato e registrar o identificador da transação. Repetições não liberam crédito extra. Falhas devolvem a reserva; interrupções são recuperadas na consulta de saldo após dez minutos.
 
-As compras permanecem desativadas no banco até configurar o segredo de comunicação e validar uma resposta real da OpenAI. Os dados Pix e a permissão do responsável ficam no banco privado, fora do HTML e do repositório. Veja CREDITOS.md.
+As compras permanecem desativadas no banco até publicar as configurações e validar uma resposta real da OpenAI. Os dados Pix e a permissão do responsável ficam no banco privado, fora do HTML e do repositório. Veja CREDITOS.md.
 
 A versão navegável sem senha, usada para demonstração, é separada do código de produção deste repositório. As verificações publicadas confirmaram bloqueio de sessão anônima e do Mentor (HTTP 401). Ainda é necessário concluir os testes reais de cadastro, confirmação por e-mail, recuperação e troca de contas com o SMTP configurado.
 

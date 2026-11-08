@@ -4,7 +4,11 @@ A integração com OpenAI está implementada. Sem a chave, o app mostra um aviso
 
 ## Estado da instalação atual
 
-Na conferência de 08/11/2026, OPENAI_API_KEY estava cadastrada na Netlify, mas sem valor em Production nem nos demais contextos. A conta OpenAI mostrava saldo de US$ 0,00 e nenhuma resposta real foi validada. Falta cadastrar uma chave válida e adicionar saldo. O código lê a chave apenas no servidor; não exponha seu valor em código, ZIP, logs ou documentação.
+Em 08/11/2026 foi criada a conta de serviço rumo-mentor-producao no projeto OpenAI existente, com chave exclusiva restrita à API de respostas. A expiração exibida é 08/12/2026; renovar antes dessa data para evitar interrupção. A chave anterior não foi revogada, pois não foi possível comprovar uso em outros ambientes.
+
+OPENAI_API_KEY e RUMO_CREDIT_SERVER_TOKEN estão salvas como segredos na Netlify apenas em Production. O hash SHA-256 do segredo interno foi conferido no Supabase. Os valores secretos não constam neste pacote.
+
+A Netlify está com publicações de produção pausadas por limite de créditos. O ciclo atual termina em 19/11/2026; é necessário aguardar o próximo ciclo ou resolver o plano no painel antes de publicar as variáveis novas. A versão anterior permanece online. O saldo OpenAI observado continua em US$ 0,00. Ainda não foi possível validar uma resposta real: faltam novo deploy e saldo OpenAI. As compras Pix permanecem bloqueadas.
 
 A tela de pacotes está ligada ao livro de créditos privado e ao fluxo de Pix manual. A compra permanece desativada até terminar a configuração e validar o Mentor. Consulte CREDITOS.md.
 

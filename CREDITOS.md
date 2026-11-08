@@ -12,7 +12,9 @@
 
 ## Estado de ativação
 
-Os dados Pix e a conta responsável foram cadastrados no banco privado. As compras estão desativadas (`enabled=false`). Falta configurar `RUMO_CREDIT_SERVER_TOKEN` na Netlify e seu hash SHA-256 no banco. Na conferência de 08/11/2026, `OPENAI_API_KEY` existia na Netlify, mas estava vazia; a conta OpenAI mostrava US$ 0,00. Também é necessário cadastrar uma chave válida, adicionar saldo e testar uma resposta real antes de ativar vendas. Testes locais usam respostas simuladas e não comprovam acesso real ao modelo.
+Os dados Pix e a conta responsável estão no banco privado. As compras continuam desativadas (`enabled=false`). OPENAI_API_KEY e RUMO_CREDIT_SERVER_TOKEN já foram salvas como segredos Production na Netlify; o hash SHA-256 do segredo interno foi configurado e conferido no Supabase. A chave OpenAI de conta de serviço foi restrita à API de respostas e expira em 08/12/2026.
+
+Falta publicar as novas variáveis, adicionar saldo OpenAI e validar uma resposta real do Mentor. A Netlify pausou novas publicações de produção por limite de créditos; o ciclo atual termina em 19/11/2026, e o site já publicado continua online. A conta OpenAI ainda mostra US$ 0,00. Testes locais simulados não comprovam acesso real ao modelo. Não habilitar vendas antes de resolver essas pendências.
 
 ## Configuração em outro ambiente
 
