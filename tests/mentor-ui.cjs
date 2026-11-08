@@ -1,25 +1,15 @@
 const {JSDOM}=require('../../auth-test-deps/node_modules/jsdom');const fs=require('node:fs');const assert=require('node:assert/strict');
-(async()=>{let failed=false,sent;
-const dom = new JSDOM(fs.readFileSync(__dirname+'/../public/index.html','utf8'), {
-  url:'https://rumo.example', runScripts:'dangerously',
-  beforeParse(w) {
-    w.scrollTo=()=>{};
-    w.fetch=async(url,opts)=>{
-      if(url.includes('/mentor')) {
-        sent=JSON.parse(opts.body);
-        return {ok:!failed,json:async()=>failed?{error:'Serviço indisponível'}:{answer:'Ajuste a abertura do projeto.'}};
-      }
-      return {ok:true,json:async()=>({user:{id:'test-user',email:'test@example.com'}})};
-    };
-  }
-});
-await new Promise(r=>setTimeout(r,100));const w=dom.window,d=w.document;
-d.querySelector('[data-mentor-open]').click();assert.ok(d.querySelector('.mc-page'));assert.equal(d.querySelector('#ma-draft'),null);
-d.querySelector('[data-mentor-pack="0"]').click();assert.equal(d.querySelector('[data-mentor-pack="0"]').getAttribute('aria-pressed'),'true');
-d.querySelector('[data-mentor-buy]').click();assert.match(d.querySelector('#mc-purchase').textContent,/Nenhum pagamento/);assert.equal(sent,undefined);
-d.querySelector('[data-mentor-preview]').click();assert.ok(d.querySelector('#ma-draft'));
-function draft(text){const input=d.querySelector('#ma-draft');input.value=text;input.dispatchEvent(new w.Event('input',{bubbles:true}))}
-draft('Meu projeto é um vídeo de música');d.querySelector('[data-mentor-action=send]').click();assert.equal(d.querySelector('[data-mentor-action=send]').disabled,true);
-await new Promise(r=>setTimeout(r,30));assert.equal(sent.message,'Meu projeto é um vídeo de música');assert.match(d.querySelector('.ma-assistant').textContent,/Ajuste a abertura/);assert.doesNotMatch(d.querySelector('.ma-assistant').textContent,/exemplo demonstrativo/);
-const ctx=d.querySelector('[data-mentor-context]');ctx.checked=false;ctx.dispatchEvent(new w.Event('change',{bubbles:true}));failed=true;draft('Uma nova pergunta');d.querySelector('[data-mentor-action=send]').click();await new Promise(r=>setTimeout(r,30));assert.equal(sent.context,null);assert.equal(d.querySelector('#ma-draft').value,'Uma nova pergunta');assert.match(d.querySelector('.ma-status').textContent,/indisponível/);assert.equal(d.querySelectorAll('.ma-assistant').length,1);
-console.log('Mentor UI: envio, resposta, contexto opcional, carregamento e recuperação de erro OK.');dom.window.close();})();
+(async()=>{let failed=false,sent,enabled=true,admin=false,reported=false,balance=0,creates=0;const order={id:'11111111-1111-4111-8111-111111111111',credits:60,amount_cents:990,status:'pending',created_at:new Date().toISOString(),expires_at:new Date(Date.now()+86400000).toISOString()};
+const status=()=>({enabled,balance,admin,orders:creates?[{...order,reported_at:reported?'today':null}]:[],pending:admin?[{...order,email:'buyer@example.com'}]:[],pix:enabled?{key:'test-pix-key',recipient:'Test Recipient'}:null});
+const dom=new JSDOM(fs.readFileSync(__dirname+'/../public/index.html','utf8'),{url:'https://rumo.example',runScripts:'dangerously',beforeParse(w){w.scrollTo=()=>{};w.fetch=async(url,opts)=>{const b=JSON.parse(opts.body);if(url.endsWith('/credits')){if(b.action==='create'){creates++;assert.equal(b.pack,'move');assert.match(b.requestId,/^[a-f0-9-]{36}$/);return {ok:true,json:async()=>({order})}}if(b.action==='report')reported=true;return {ok:true,json:async()=>status()}}if(url.endsWith('/mentor')){sent=b;return {ok:!failed,json:async()=>failed?{error:'Serviço indisponível'}:{answer:'Ajuste a abertura do projeto.'}}}return {ok:true,json:async()=>({user:{id:'test-user',email:'test@example.com'}})}}}});
+const pause=()=>new Promise(r=>setTimeout(r,40));await pause();const w=dom.window,d=w.document;
+d.querySelector('[data-mentor-open]').click();await pause();assert.equal(d.querySelector('[data-credit-action=chat]').disabled,true);assert.equal(d.querySelector('#ma-draft'),null);assert.equal(d.querySelector('[data-mentor-preview]'),null);
+d.querySelector('[data-credit-action=create]').click();await pause();assert.ok(d.querySelector('#mc-pix-order'));assert.match(d.querySelector('#mc-pix-order').textContent,/Test Recipient/);assert.equal(creates,1);
+d.querySelector('[data-credit-action=report]').click();await pause();assert.equal(d.querySelector('[data-credit-action=chat]').disabled,true);assert.match(d.querySelector('#mc-pix-order').textContent,/Pagamento informado/);assert.equal(sent,undefined);
+balance=60;d.querySelector('[data-credit-action=refresh]').click();await pause();d.querySelector('[data-credit-action=chat]').click();assert.ok(d.querySelector('#ma-draft'));
+function draft(text){const i=d.querySelector('#ma-draft');i.value=text;i.dispatchEvent(new w.Event('input',{bubbles:true}))}
+draft('Meu projeto é um vídeo de música');d.querySelector('[data-mentor-action=send]').click();await pause();assert.equal(sent.message,'Meu projeto é um vídeo de música');assert.match(d.querySelector('.ma-assistant').textContent,/Ajuste a abertura/);
+failed=true;draft('Uma nova pergunta');d.querySelector('[data-mentor-action=send]').click();await pause();assert.equal(d.querySelector('#ma-draft').value,'Uma nova pergunta');assert.match(d.querySelector('.ma-status').textContent,/indisponível/);assert.equal(d.querySelectorAll('.ma-assistant').length,1);
+d.querySelector('[data-rumo-settings]').click();await pause();assert.equal(d.querySelector('[data-credit-admin]'),null);admin=true;d.querySelector('[data-act=home]').click();d.querySelector('[data-rumo-settings]').click();await pause();d.querySelector('[data-credit-admin]').click();await pause();assert.match(d.querySelector('.pc-admin-order').textContent,/buyer@example.com/);d.querySelector('[data-credit-action=approve]').click();assert.match(d.querySelector('.pc-status').textContent,/Confirme o recebimento/);
+enabled=false;d.querySelector('[data-mentor-open]').click();await pause();assert.equal(d.querySelector('[data-credit-action=create]').disabled,true);assert.equal(d.querySelector('[data-credit-action=chat]').disabled,true);
+console.log('Pix UI: pedido, aviso sem saldo, bloqueio, mentor, erro recuperável e painel restrito OK.');dom.window.close();})().catch(e=>{console.error(e);process.exit(1)});

@@ -1,20 +1,36 @@
-# Créditos do Mentor — estado atual
+# Pix manual e créditos do Mentor
 
-A tela de créditos é uma proposta visual. Os pacotes de 20, 60 e 150 créditos e os preços mostrados são ilustrativos e não representam uma venda ativa. O saldo de exemplo não é consultado em um banco de créditos.
+## Implementado
 
-O botão Comprar créditos mostra uma explicação de prévia. Não há provedor de pagamento conectado, checkout, cobrança, liberação ou desconto de créditos pagos. A opção Ver a conversa do Mentor · prévia permite abrir a interface existente. Não use esse botão como comprovação de pagamento.
+- Pacotes: 20 créditos por R$ 4,90; 60 por R$ 9,90; 150 por R$ 19,90. O catálogo é validado no servidor SQL; valores enviados pelo navegador são ignorados.
+- Pedidos reais vinculados à sessão confirmada; limite de três pendentes recentes e instruções válidas por 48 horas.
+- “Já fiz o Pix” registra um aviso. Não comprova recebimento nem libera crédito.
+- Em Configurações, somente a conta cadastrada em `rumo_private.pix_admins` vê Conferir pagamentos Pix. A permissão é conferida de novo pelo banco a cada ação.
+- Para aprovar, conferir valor e recebimento no banco e preencher o identificador Pix do extrato. Não aprovar por captura de tela ou comprovante isolado. O mesmo identificador exato não credita dois pedidos, e a repetição da mesma aprovação não credita novamente.
+- Saldo privado, eventos e transações atômicas. Um crédito é reservado antes da IA e consumido quando há resposta. Erros da IA e do limite diário devolvem a reserva. Reservas interrompidas são devolvidas na próxima consulta após dez minutos.
+- O saldo da OpenAI é independente do saldo comprado no Rumo. Receber Pix não recarrega a conta OpenAI.
 
-O limite de 20 mensagens por conta ao dia é um controle de uso do backend. Não é saldo comprado. A conta da OpenAI e um futuro saldo de cliente do Rumo são controles separados; receber um pagamento no Rumo não compra créditos da OpenAI automaticamente.
+## Estado de ativação
 
-## Antes de ativar vendas
+Os dados Pix e a conta responsável foram cadastrados no banco privado. As compras estão desativadas (`enabled=false`). Falta configurar `RUMO_CREDIT_SERVER_TOKEN` na Netlify e seu hash SHA-256 no banco, além de confirmar saldo e testar uma resposta real da OpenAI antes de ativar vendas. Testes locais usam respostas simuladas e não comprovam acesso real ao modelo.
 
-- Definir e aprovar pacotes, preços, consumo, validade e regras de reembolso.
-- Escolher e configurar um provedor de pagamento.
-- Criar checkout no servidor usando o pacote do catálogo; não aceitar preços enviados pelo navegador.
-- Validar a confirmação assinada do pagamento no servidor e conferir pedido, valor, moeda e estado aprovado.
-- Registrar cada pagamento uma única vez, inclusive quando a confirmação for reenviada.
-- Manter saldo e histórico de créditos por usuário, com acesso restrito.
-- Reservar e consumir créditos de forma atômica no backend do Mentor; desfazer a reserva quando a geração falhar conforme a regra definida.
-- Testar pagamentos aprovados, recusados, duplicados e reembolsados antes de divulgar a venda.
+## Configuração em outro ambiente
 
-Nenhuma dessas etapas financeiras está implementada nesta versão. A prévia navegável separada pode simular compra, saldo e respostas fixas somente para demonstração.
+1. Aplicar, nesta ordem, `supabase/credit-ledger.sql`, `supabase/pix-manual.sql` e `supabase/mentor-quota.sql`. Os scripts não contêm dados bancários nem segredos.
+2. Cadastrar chave Pix e nome do recebedor em `rumo_private.pix_settings`, mantendo `enabled=false`.
+3. Cadastrar em `rumo_private.pix_admins` o UUID de uma conta Auth confirmada. Não usar `user_metadata` como permissão de administrador.
+4. Gerar 32 bytes aleatórios em hexadecimal (64 caracteres). Salvar o valor como segredo `RUMO_CREDIT_SERVER_TOKEN` na Netlify, no contexto Production, escopo Functions. Salvar somente o hash SHA-256 hexadecimal correspondente em `server_token_hash`. Nunca colocar o segredo no HTML, GitHub, ZIP ou logs. O hash não substitui o segredo na Netlify.
+5. Manter as variáveis de autenticação existentes e `OPENAI_API_KEY`. Publicar pelo Git conectado ou CLI com suporte a funções; Netlify Drop sozinho não publica o backend.
+6. Confirmar saldo/acesso OpenAI, definir canal de atendimento e prazo de conferência, validar recebimento com o banco e a identificação do pedido. Testar IA e permissões em ambiente de teste antes de habilitar `enabled=true` na produção. Não inventar pagamentos nem saldos reais para testar.
+
+## Operação
+
+O cliente cria um pedido, paga o valor exato para a chave exibida e informa que pagou. O responsável entra com sua própria conta e acessa Configurações → Conferir pagamentos Pix. Após localizar a transferência real no extrato, confere valor/recebedor, registra seu identificador e aprova. O cliente usa Atualizar saldo e pedidos para consultar a liberação.
+
+Não há conciliação bancária automática, prazo automático de aprovação nem envio de comprovantes pelo app. Ao atender pedidos iguais, confirme com o pagador a qual conta/pedido pertence cada transação, sem registrar o mesmo Pix duas vezes. Não existe QR Code de cobrança individual; o fluxo usa transferência pela chave e conferência manual.
+
+Pedidos rejeitados não liberam crédito. Uma aprovação não faz transferência bancária. Estornos financeiros exigem operação separada no banco; o app não executa devoluções Pix. As funções antigas de reversão do livro são restritas ao servidor e não representam devolução de dinheiro.
+
+## Verificação
+
+Testes de backend cobrem sessão, origem, ações internas bloqueadas, catálogo, ausência de saldo, falhas da IA e conclusão da reserva. A interface testa pedido, aviso sem crédito, administrador e recuperação de erro. Os testes SQL com dados temporários e rollback cobrem aprovação repetida, identificador duplicado, autorização por sessão, reserva e devolução.

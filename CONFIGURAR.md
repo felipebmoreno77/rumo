@@ -4,9 +4,9 @@ O projeto já está conectado ao GitHub e publicado na Netlify. Preserve as vari
 Não há login fictício, senha universal nem modo de pular a confirmação.
 
 ## Publicar
-Este pacote contém duas Netlify Functions: autenticação e Mentor. Não basta arrastar a pasta para Netlify Drop.
+Este pacote contém três Netlify Functions: autenticação, Mentor e créditos Pix. Não basta arrastar a pasta para Netlify Drop.
 Importe os arquivos em um repositório Git e conecte-o à Netlify, com netlify.toml na raiz.
-A pasta publicada é public; netlify/functions contém o servidor.
+A pasta publicada é public; netlify/functions contém o servidor e netlify/lib contém o módulo compartilhado de créditos.
 Alternativamente, use o fluxo de deploy com functions da CLI oficial da Netlify.
 Não coloque arquivos de configuração secreta dentro de public.
 
@@ -63,7 +63,7 @@ A sessão é revalidada no servidor ao carregar a página e ao voltar à aba.
   provedor continuam aplicáveis. Nenhum domínio de e-mail é bloqueado pelo app.
 
 ## Verificação
-Testes de backend: node --test tests/security.cjs tests/mentor.cjs (Node 22).
+Testes de backend: node --test tests/security.cjs tests/mentor.cjs tests/credits.cjs (Node 22).
 Teste DOM: instalar jsdom@26.1.0 num diretório auth-test-deps ao lado da pasta do projeto;
 rodar node tests/gate.cjs, node tests/mentor-ui.cjs e node tests/settings-account.cjs.
 Foram testados bloqueio de origem externa, ausência/adulteração de sessão, conta
@@ -73,4 +73,4 @@ Ainda faltam testes reais de envio, recebimento, confirmação, recuperação, l
 e troca de contas em HTTPS após configurar Supabase e SMTP.
 
 ## Mentor Rumo
-Consulte MENTOR.md para a integração com OpenAI e CREDITOS.md para o estado da compra demonstrativa. A chave fica somente no servidor.
+Consulte MENTOR.md para a integração com OpenAI e CREDITOS.md para a operação e as pendências de ativação do Pix manual. A chave fica somente no servidor.

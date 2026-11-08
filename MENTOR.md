@@ -50,3 +50,9 @@ node tests/mentor-ui.cjs
 node tests/settings-account.cjs
 
 Os testes de IA usam fetch simulado e não geram cobrança. Configure limites/alertas de uso no projeto da OpenAI e monitore os custos depois de ativar.
+
+
+
+## Créditos Pix
+
+O Mentor exige saldo no livro privado e o segredo RUMO_CREDIT_SERVER_TOKEN. A reserva acontece antes de chamar a IA, e falhas devolvem o crédito. O limite diário de 20 mensagens continua separado do saldo comprado. Veja CREDITOS.md para configuração e estado de ativação.
