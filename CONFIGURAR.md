@@ -53,7 +53,7 @@ A sessão é revalidada no servidor ao carregar a página e ao voltar à aba.
 - Progresso continua local neste navegador, separado por ID de conta. Isso NÃO é criptografia
   nem armazenamento em nuvem; quem controla o computador pode inspecionar o armazenamento.
   O progresso anônimo anterior não é atribuído automaticamente a uma conta.
-- Não há tabelas públicas, listagem de e-mails ou service_role. Não foi criado banco de
+- O Mentor usa uma tabela privada de contagem diária, acessível apenas por uma função que verifica auth.uid(). Não há listagem de e-mails ou service_role. Não foi criado banco de
   perfis. Se adicionar dados remotos, exigir autorização por usuário e RLS em cada tabela.
 - O dispositivo pode reter acesso visual até recarregar/retomar a aba; requisições de
   autenticação continuam validadas no servidor. Tokens revogados podem ter limites
@@ -70,3 +70,6 @@ não confirmada, cookies protegidos, senha curta e configuração ausente.
 Teste de interface local confirmou que o menu leva ao login.
 Ainda faltam testes reais de envio, recebimento, confirmação, recuperação, login/logout
 e troca de contas em HTTPS após configurar Supabase e SMTP.
+
+## Mentor Rumo
+Consulte MENTOR.md para ativar a integração com OpenAI. A chave fica somente na função de servidor.
