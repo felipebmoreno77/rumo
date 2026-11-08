@@ -4,9 +4,9 @@ A integração com OpenAI está implementada. Sem a chave, o app mostra um aviso
 
 ## Estado da instalação atual
 
-A chave já foi cadastrada como segredo na Netlify, no contexto de produção. O código a lê no servidor. A última conferência mostrou saldo zerado na OpenAI; uma resposta real ainda não foi validada. Não exponha o valor da chave em código, ZIP, logs ou documentação.
+Na conferência de 08/11/2026, OPENAI_API_KEY estava cadastrada na Netlify, mas sem valor em Production nem nos demais contextos. A conta OpenAI mostrava saldo de US$ 0,00 e nenhuma resposta real foi validada. Falta cadastrar uma chave válida e adicionar saldo. O código lê a chave apenas no servidor; não exponha seu valor em código, ZIP, logs ou documentação.
 
-A tela de pacotes anterior ao Mentor é demonstrativa. Ela não recebe pagamentos nem controla saldo comprado. Consulte CREDITOS.md.
+A tela de pacotes está ligada ao livro de créditos privado e ao fluxo de Pix manual. A compra permanece desativada até terminar a configuração e validar o Mentor. Consulte CREDITOS.md.
 
 ## Ativação na Netlify (instalação nova ou substituição da chave)
 

@@ -29,7 +29,7 @@ Não coloque senhas, chaves administrativas ou a chave Resend no repositório. O
 
 O código da branch main está conectado à publicação automática na Netlify. A página inicial é pública; menu, questionários e funções exigem login validado pelo servidor. Configurações mostra o e-mail da conta conectada e permite desconectar. O progresso continua local, separado por conta.
 
-O Mentor tem integração com OpenAI pelo servidor. A chave já foi cadastrada na hospedagem; nunca inclua seu valor no repositório. Na última conferência de ativação, o saldo estava zerado e uma resposta real da IA ainda não havia sido validada.
+O Mentor tem integração com OpenAI pelo servidor. Na conferência de 08/11/2026, a variável OPENAI_API_KEY existia na Netlify, mas estava vazia em todos os contextos. A conta OpenAI mostrava US$ 0,00; uma resposta real ainda não foi validada. Falta cadastrar uma chave válida e adicionar saldo. Nunca inclua o valor da chave no repositório.
 
 O Pix manual tem pedidos, saldo por conta, painel exclusivo do responsável e reserva de um crédito por resposta do Mentor. Informar pagamento não libera saldo; a aprovação exige conferir o extrato e registrar o identificador da transação. Repetições não liberam crédito extra. Falhas devolvem a reserva; interrupções são recuperadas na consulta de saldo após dez minutos.
 

@@ -12,7 +12,7 @@
 
 ## Estado de ativação
 
-Os dados Pix e a conta responsável foram cadastrados no banco privado. As compras estão desativadas (`enabled=false`). Falta configurar `RUMO_CREDIT_SERVER_TOKEN` na Netlify e seu hash SHA-256 no banco, além de confirmar saldo e testar uma resposta real da OpenAI antes de ativar vendas. Testes locais usam respostas simuladas e não comprovam acesso real ao modelo.
+Os dados Pix e a conta responsável foram cadastrados no banco privado. As compras estão desativadas (`enabled=false`). Falta configurar `RUMO_CREDIT_SERVER_TOKEN` na Netlify e seu hash SHA-256 no banco. Na conferência de 08/11/2026, `OPENAI_API_KEY` existia na Netlify, mas estava vazia; a conta OpenAI mostrava US$ 0,00. Também é necessário cadastrar uma chave válida, adicionar saldo e testar uma resposta real antes de ativar vendas. Testes locais usam respostas simuladas e não comprovam acesso real ao modelo.
 
 ## Configuração em outro ambiente
 

@@ -1,7 +1,7 @@
 RUMO — LOGIN, MENTOR E PIX MANUAL
 
 Este pacote contém o app completo com login real, pedidos Pix manuais, saldo por conta e aprovação pelo responsável.
-A compra está desativada até terminar a configuração do segredo do servidor e validar acesso/saldo à OpenAI. Nenhum pagamento deve ser solicitado enquanto a compra estiver desativada. Veja CREDITOS.md.
+A compra está desativada até terminar a configuração do segredo do servidor, preencher a chave OpenAI (variável atualmente vazia), adicionar saldo e validar uma resposta real. Nenhum pagamento deve ser solicitado enquanto a compra estiver desativada. Veja CREDITOS.md.
 
 PUBLICAÇÃO
 Publique pelo repositório GitHub conectado ao projeto Netlify ou por CLI com suporte a funções. Arrastar o ZIP no Netlify Drop não publica as funções necessárias ao login.
