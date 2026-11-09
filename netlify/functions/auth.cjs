@@ -1,6 +1,13 @@
 'use strict';
 const cookie=(name,value,age)=>name+'='+encodeURIComponent(value)+'; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age='+age;
 const clear=()=>[cookie('__Host-rumo-access','',0),cookie('__Host-rumo-refresh','',0)];
+function pixPayload(pix,amountCents){
+ const tlv=(id,value)=>id+String(value.length).padStart(2,'0')+value;
+ const name=String(pix.recipient).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9 ]/g,'').toUpperCase().slice(0,25);
+ let body='000201'+tlv('26',tlv('00','br.gov.bcb.pix')+tlv('01',pix.key))+'520400005303986'+tlv('54',(amountCents/100).toFixed(2))+'5802BR'+tlv('59',name)+tlv('60','BRASIL')+tlv('62',tlv('05',pix.reference))+'6304';
+ let crc=0xffff;for(let i=0;i<body.length;i++){crc^=body.charCodeAt(i)<<8;for(let j=0;j<8;j++)crc=((crc<<1)^((crc&0x8000)?0x1021:0))&0xffff;}
+ return body+crc.toString(16).toUpperCase().padStart(4,'0');
+}
 async function handleAuth(event,env){
  const headers={'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'};
  const reply=(statusCode,data,cookies=[])=>({statusCode,headers,multiValueHeaders:{'Set-Cookie':cookies},body:JSON.stringify(data)});
@@ -36,6 +43,17 @@ async function handleAuth(event,env){
   }
   if(b.action==='session'){
    const s=await session();return s?reply(200,{user:userInfo(s.user)},s.cookies):reply(401,{error:'Entre na sua conta para continuar.'},clear());
+  }
+  if(b.action==='license'){
+   if(!['status','start','create','report','orders','approve','reject'].includes(b.operation)||!b.data||typeof b.data!=='object'||Array.isArray(b.data))return reply(400,{error:'Solicitação inválida.'});
+   const s=await session();if(!s)return reply(401,{error:'Entre na sua conta para continuar.'},clear());
+   const owner=s.user.id==='4793e6e8-40b6-4bb1-be3d-eb0366433ac2'&&s.user.email?.toLowerCase()==='felipebmoreno@icloud.com';
+   if(['orders','approve','reject'].includes(b.operation)&&!owner)return reply(403,{error:'Acesso exclusivo à administração.'},s.cookies);
+   const res=await fetch(base.replace(/\/$/,'')+'/rest/v1/rpc/rumo_license',{method:'POST',headers:{apikey:key,Authorization:'Bearer '+s.token,'Content-Type':'application/json'},body:JSON.stringify({p_action:b.operation,p_data:b.data}),signal:AbortSignal.timeout(10000)});
+   const data=await res.json().catch(()=>null);
+   if(!res.ok){const denied=res.status===403||data?.code==='42501';return reply(denied?403:res.status>=500?503:400,{error:denied?'Acesso não autorizado. Entre novamente.':data?.code==='P0001'&&typeof data.message==='string'?data.message:'Não foi possível concluir. Confira os dados e tente novamente.'},s.cookies);}
+   if(data?.pix&&data.order?.amountCents){data.pix.payload=pixPayload(data.pix,data.order.amountCents);}
+   return reply(200,data,s.cookies);
   }
   if(b.action==='portal'){
    const operations=['access','event','review','ticket','dashboard','ticket_status'];
@@ -88,3 +106,4 @@ async function handleAuth(event,env){
 // A configuração é local à requisição. Nenhuma variável global é trocada entre contas/ambientes.
 exports.createAuthHandler=env=>event=>handleAuth(event,env||{});
 exports.handler=event=>handleAuth(event,process.env);
+exports.pixPayload=pixPayload;

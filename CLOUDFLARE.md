@@ -1,3 +1,7 @@
+## Atualização: teste e acesso vitalício
+
+O índice público agora é gerado a partir de `public/storefront.html`. O app completo de `public/index.html` é incorporado ao Worker e entregue em `/app` somente após validar sessão e licença. Os comandos de build/publicação continuam os mesmos. Leia `ACESSO_VITALICIO.md` antes de publicar por outra plataforma. Instruções legadas de hospedagem estática abaixo não substituem essa proteção.
+
 # Publicação ativa: Cloudflare Workers
 
 O projeto `rumo` usa Workers com Static Assets, ligado a `felipebmoreno77/rumo`, branch `main`.

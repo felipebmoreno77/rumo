@@ -3,7 +3,7 @@ const fs=require('node:fs'),assert=require('node:assert/strict');
 const html=fs.readFileSync(__dirname+'/../public/index.html','utf8');
 const key='rumo.account.v1.task-record-test';
 const pause=()=>new Promise(r=>setTimeout(r,250));
-async function boot(saved){const dom=new JSDOM(html,{url:'https://rumo.example',runScripts:'dangerously',beforeParse(w){w.scrollTo=()=>{};if(saved)w.localStorage.setItem(key,JSON.stringify(saved));w.fetch=async()=>({ok:true,json:async()=>({user:{id:'task-record-test',email:'teste@example.com'}})});}});await pause();return dom;}
+async function boot(saved){const dom=new JSDOM(html,{url:'https://rumo.example',runScripts:'dangerously',beforeParse(w){w.scrollTo=()=>{};if(saved)w.localStorage.setItem(key,JSON.stringify(saved));w.fetch=async(url,options)=>JSON.parse(options.body).action==='license'?({ok:true,json:async()=>({allowed:true,state:'lifetime'})}):({ok:true,json:async()=>({user:{id:'task-record-test',email:'teste@example.com'}})});}});await pause();return dom;}
 function input(dom,selector,text){const el=dom.window.document.querySelector(selector);assert.ok(el,selector);el.value=text;el.dispatchEvent(new dom.window.Event('input',{bubbles:true}));}
 function plan(d,k){d.querySelector('[data-act=routines]').click();d.querySelector('[data-route='+k+']').click();}
 (async()=>{

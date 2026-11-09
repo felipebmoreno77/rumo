@@ -18,9 +18,25 @@ async function readSmallBody(request){
  const body=new Uint8Array(size);let offset=0;for(const p of parts){body.set(p,offset);offset+=p.byteLength}
  return new TextDecoder('utf-8',{fatal:true}).decode(body);
 }
-export function createRumoWorker(makeAuthHandler){return {
+export function createRumoWorker(makeAuthHandler,protectedHtml=''){return {
  async fetch(request,env){
   const path=new URL(request.url).pathname.replace(/\/$/,'')||'/';
+  if(path==='/app'){
+   if(!['GET','HEAD'].includes(request.method))return json(405,'Método não permitido.');
+   const origin=new URL(request.url).origin;
+   if(![env.APP_ORIGIN,env.APP_ADDITIONAL_ORIGIN].filter(Boolean).includes(origin))return json(403,'Solicitação não autorizada.');
+   try{
+    const result=await makeAuthHandler({APP_ORIGIN:origin,SUPABASE_URL:env.SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY:env.SUPABASE_PUBLISHABLE_KEY})({httpMethod:'POST',headers:{origin,'content-type':'application/json',cookie:request.headers.get('cookie')||''},body:JSON.stringify({action:'license',operation:'status',data:{}})});
+    const state=JSON.parse(result.body),headers=new Headers({...securityHeaders,'Cache-Control':'private, no-store','X-Robots-Tag':'noindex, nofollow'});
+    for(const cookie of result.multiValueHeaders?.['Set-Cookie']||[])headers.append('Set-Cookie',cookie);
+    if(result.statusCode===401||result.statusCode===403){headers.set('Location','/?entrar=1');return new Response(null,{status:302,headers});}
+    if(result.statusCode!==200)return json(503,'Não foi possível verificar seu acesso. Recarregue a página em instantes.');
+    if(state.allowed!==true){headers.set('Location','/?comprar=1');return new Response(null,{status:302,headers});}
+    if(!protectedHtml)return json(503,'Aplicativo aguardando publicação.');
+    headers.set('Content-Type','text/html; charset=utf-8');
+    return new Response(request.method==='HEAD'?null:protectedHtml,{status:200,headers});
+   }catch{return json(503,'Não foi possível verificar seu acesso. Tente novamente.');}
+  }
   const api=path.startsWith('/api/')||path.startsWith('/.netlify/functions/');
   if(['/api/mentor','/.netlify/functions/mentor','/api/credits','/.netlify/functions/credits'].includes(path))return json(410,'O Mentor é gratuito e responde no aplicativo. Não há compra de créditos.');
   if(!['/api/auth','/.netlify/functions/auth'].includes(path)){

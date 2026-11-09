@@ -1,3 +1,7 @@
+## Teste e compra do aplicativo
+
+O Rumo oferece teste de 24 horas corridas por conta, iniciado no primeiro uso, e acesso vitalício por R$ 19,90 (pagamento único por Pix, com conferência manual). A área do app é validada no servidor Cloudflare e no Supabase. Veja `ACESSO_VITALICIO.md` para operação, proteção e instruções da aba Compras. O Mentor guiado e a continuação dos dias 8 a 14 estão incluídos no acesso.
+
 # Rumo
 
 Aplicativo web de exploração de caminhos para jovens, com questionários solo e em dupla, nove grupos de áreas e experiências para testar interesses.

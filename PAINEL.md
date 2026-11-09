@@ -2,6 +2,8 @@
 
 Entre com `felipebmoreno@icloud.com`, abra o menu lateral e selecione **Painel administrativo**. A conta já existente é vinculada pelo UUID, pelo e-mail confirmado atual e por uma sessão ainda existente no Supabase. Nenhuma permissão vem de `user_metadata`, parâmetros do cliente ou armazenamento do navegador.
 
+A aba **Compras** administra os pedidos de acesso vitalício de R$ 19,90. Consulte `ACESSO_VITALICIO.md` para conferir recebimentos e liberar contas.
+
 ## Funcionalidades
 
 - Cadastros totais e confirmados vêm de `auth.users`; novos cadastros podem ser filtrados por 7, 30 ou 90 dias.

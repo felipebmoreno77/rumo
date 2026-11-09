@@ -1,0 +1,43 @@
+-- Todas as escritas são revertidas; não aprova nenhum pagamento real.
+begin;
+do $$
+declare owner uuid; buyer uuid; sid uuid; buyer_sid uuid; data jsonb; original_end text; oid uuid; rid uuid:=gen_random_uuid();
+begin
+ select owner_id into owner from rumo_private.portal_config;
+ select id into sid from auth.sessions where user_id=owner and (not_after is null or not_after>now()) limit 1;
+ select u.id into buyer from auth.users u where u.id<>owner and u.email_confirmed_at is not null and coalesce(u.is_anonymous,false)=false and not exists(select 1 from rumo_private.app_access a where a.user_id=u.id) limit 1;
+ if buyer is null or sid is null then raise exception 'Fixtures de contas confirmadas não encontradas';end if;
+ buyer_sid:=gen_random_uuid();insert into auth.sessions(id,user_id) values(buyer_sid,buyer);
+ update rumo_private.app_offer set enabled=true;
+ perform set_config('request.jwt.claims',jsonb_build_object('sub',buyer,'role','authenticated','session_id',buyer_sid)::text,true);
+ execute 'set local role authenticated';
+ data:=public.rumo_license('status');if data->>'state'<>'ready' then raise exception 'Teste começou sem usar o app';end if;
+ data:=public.rumo_license('start');if data->>'state'<>'trial' or data->>'allowed'<>'true' then raise exception 'Teste não começou';end if;
+ original_end:=data->>'trialExpiresAt';data:=public.rumo_license('start');if data->>'trialExpiresAt'<>original_end then raise exception 'Teste reiniciado';end if;
+ data:=public.rumo_license('create',jsonb_build_object('requestId',rid,'amountCents',1));oid:=(data->'order'->>'id')::uuid;
+ if (data->'order'->>'amountCents')::int<>1990 then raise exception 'Preço controlado pelo cliente';end if;
+ data:=public.rumo_license('create',jsonb_build_object('requestId',rid));if data->'order'->>'id'<>oid::text then raise exception 'Pedido duplicado';end if;
+ data:=public.rumo_license('report',jsonb_build_object('orderId',oid));if data->>'state'<>'trial' or data->'order'->>'status'<>'reported' then raise exception 'Informar Pix liberou acesso';end if;
+ begin perform public.rumo_license('approve',jsonb_build_object('orderId',oid,'confirmed',true,'bankReference','TESTE-NAO-REAL-123'));raise exception 'Usuário aprovou Pix';exception when insufficient_privilege then null;end;
+ begin perform public.rumo_license('orders');raise exception 'Usuário leu pedidos';exception when insufficient_privilege then null;end;
+ begin perform count(*) from rumo_private.app_orders;raise exception 'Tabela de compras exposta';exception when insufficient_privilege then null;end;
+ execute 'reset role';
+ update rumo_private.app_access set trial_started_at=now()-interval '25 hours',trial_expires_at=now()-interval '1 hour' where user_id=buyer;
+ execute 'set local role authenticated';data:=public.rumo_license('start');if data->>'state'<>'expired' or data->>'allowed'<>'false' then raise exception 'Trial expirado renovou';end if;
+ execute 'reset role';
+ perform set_config('request.jwt.claims',jsonb_build_object('sub',owner,'role','authenticated','session_id',sid)::text,true);execute 'set local role authenticated';
+ if public.rumo_license('status')->>'state'<>'admin' then raise exception 'Administrador bloqueado';end if;
+ begin perform public.rumo_license('approve',jsonb_build_object('orderId',oid,'confirmed',false,'bankReference','TESTE-NAO-REAL-123'));raise exception 'Aprovação sem confirmação';exception when invalid_parameter_value then null;end;
+ perform public.rumo_license('approve',jsonb_build_object('orderId',oid,'confirmed',true,'bankReference','TESTE-NAO-REAL-123'));
+ perform public.rumo_license('approve',jsonb_build_object('orderId',oid,'confirmed',true,'bankReference','TESTE-NAO-REAL-123'));
+ execute 'reset role';
+ perform set_config('request.jwt.claims',jsonb_build_object('sub',buyer,'role','authenticated','session_id',buyer_sid)::text,true);execute 'set local role authenticated';
+ data:=public.rumo_license('status');if data->>'state'<>'lifetime' or data->>'allowed'<>'true' then raise exception 'Compra não liberou acesso';end if;
+ execute 'reset role';
+ perform set_config('request.jwt.claims',jsonb_build_object('sub',buyer,'role','authenticated','session_id',gen_random_uuid())::text,true);execute 'set local role authenticated';
+ begin perform public.rumo_license('status');raise exception 'Sessão revogada aceita';exception when insufficient_privilege then null;end;
+ execute 'reset role';perform set_config('request.jwt.claims','{}',true);execute 'set local role anon';
+ begin perform public.rumo_license('status');raise exception 'Anônimo leu compras';exception when insufficient_privilege then null;end;
+ execute 'reset role';
+end $$;
+rollback;
