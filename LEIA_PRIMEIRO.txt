@@ -1,15 +1,16 @@
-RUMO — LOGIN, MENTOR E PIX MANUAL
+RUMO — LOGIN REAL E MENTOR GRATUITO
 
-Este pacote contém o app completo com login real, pedidos Pix manuais, saldo por conta e aprovação pelo responsável.
-As credenciais foram configuradas como segredos de produção na Netlify, e o hash interno foi conferido no Supabase. A compra continua desativada: falta novo deploy, saldo OpenAI e teste de uma resposta real. A Netlify está com publicações pausadas por limite de créditos (ciclo termina em 19/11/2026). A chave OpenAI expira em 08/12/2026 e precisa ser renovada antes disso. Nenhum pagamento deve ser solicitado enquanto a compra estiver desativada. Veja CREDITOS.md.
+O Mentor agora responde no navegador por comandos e sugestões guiadas. Não usa OpenAI, saldo ou assinatura do Mentor. O texto e a navegação funcionam com os dados locais do app; login e voz podem depender de serviços online.
+
+O botão + adiciona referências pessoais temporárias. O assistente não analisa fotos, arquivos ou projetos. Veja MENTOR.md.
 
 PUBLICAÇÃO
-Publique pelo repositório GitHub conectado ao projeto Netlify ou por CLI com suporte a funções. Arrastar o ZIP no Netlify Drop não publica as funções necessárias ao login.
-Mantenha netlify.toml na raiz, public como pasta publicada e as pastas netlify/functions e netlify/lib.
+Use o repositório Git conectado à hospedagem ou uma CLI com suporte a funções. Netlify Drop sozinho não publica o backend de autenticação. A Netlify estava com novas publicações pausadas na última conferência; este pacote não comprova atualização do endereço publicado.
 
-SEGURANÇA
-Chaves reais e dados Pix ficam nas configurações do servidor/banco; não estão incluídos no ZIP.
-O botão Já fiz o Pix não libera créditos. O responsável deve conferir a transferência no próprio banco antes de aprovar.
-A conta administrativa é definida em tabela privada, nunca por texto editável no navegador.
+CONFIGURAÇÃO
+Mantenha APP_ORIGIN, SUPABASE_URL e SUPABASE_PUBLISHABLE_KEY no servidor. As antigas chaves de IA e de créditos não são usadas pela conversa gratuita. Nunca coloque segredos no HTML, repositório ou ZIP.
 
-O progresso da jornada é local e separado por conta. A conversa de demonstração sem senha é um arquivo separado e não faz parte deste pacote de produção.
+PAGAMENTOS
+A tela de compra foi retirada, e novos pedidos são bloqueados no servidor. Os dados privados anteriores não foram apagados; esta mudança não transfere nem devolve dinheiro.
+
+A prévia sem senha usa conta fictícia e é um arquivo separado. O app deste ZIP mantém login real.

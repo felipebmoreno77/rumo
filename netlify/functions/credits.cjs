@@ -12,8 +12,8 @@ exports.handler=async event=>{
  try{
   const s=await session(event);cookies=s.cookies;
   if(s.status!==200)return reply(s.status===401?401:503,{error:s.status===401?'Entre na sua conta para continuar.':'Não foi possível validar sua conta.'});
+  if(b.action==='create')return reply(410,{error:'O Mentor agora é gratuito. A compra de novos créditos foi encerrada.'});
   const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-  if(b.action==='create'&&(!['start','move','more'].includes(b.pack)||!uuid.test(b.requestId||'')))return reply(400,{error:'Pacote ou pedido inválido.'});
   if(['report','admin_approve','admin_reject'].includes(b.action)&&!uuid.test(b.orderId||''))return reply(400,{error:'Pedido inválido.'});
   if(b.action==='admin_approve'&&(b.confirmed!==true||typeof b.bankReference!=='string'||b.bankReference.trim().length<10||b.bankReference.length>100))return reply(400,{error:'Confirme o recebimento no banco e informe o identificador da transação Pix.'});
   const result=await rpc(s.token,b.action,{pack:b.pack,request_id:b.requestId,order_id:b.orderId,bank_reference:typeof b.bankReference==='string'?b.bankReference.trim():undefined,confirmed:b.confirmed});

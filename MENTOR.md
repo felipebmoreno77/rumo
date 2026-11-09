@@ -1,62 +1,42 @@
-# Ativar o Mentor Rumo
+# Mentor Rumo gratuito
 
-A integração com OpenAI está implementada. Sem a chave, o app mostra um aviso e não fabrica respostas. A validação local usa respostas simuladas; uma resposta real ainda precisa ser testada depois da ativação.
+O Mentor é um assistente guiado do próprio aplicativo. Respostas e sugestões são escolhidas no navegador por comandos conhecidos e pelo contexto local da jornada. Ele não faz chamadas à OpenAI nem exige créditos ou assinatura do Mentor.
 
-## Estado da instalação atual
+## O que faz
 
-Em 08/11/2026 foi criada a conta de serviço rumo-mentor-producao no projeto OpenAI existente, com chave exclusiva restrita à API de respostas. A expiração exibida é 08/12/2026; renovar antes dessa data para evitar interrupção. A chave anterior não foi revogada, pois não foi possível comprovar uso em outros ambientes.
+- Explica como usar o questionário, mapa, caminhos, Passaporte e configurações.
+- Mostra a tarefa do caminho escolhido quando o próximo passo estiver liberado.
+- Com o questionário incompleto, mantém o caminho indefinido e oferece o questionário.
+- Oferece sugestões curtas de começo, revisão pessoal e divisão do tempo.
+- Abre telas por botões de ação, respeitando os bloqueios existentes.
+- Permite desligar o uso do contexto da jornada na conversa.
+- Oferece ditado e leitura de respostas pelos recursos do navegador.
 
-OPENAI_API_KEY e RUMO_CREDIT_SERVER_TOKEN estão salvas como segredos na Netlify apenas em Production. O hash SHA-256 do segredo interno foi conferido no Supabase. Os valores secretos não constam neste pacote.
+## Limites claros
 
-A Netlify está com publicações de produção pausadas por limite de créditos. O ciclo atual termina em 19/11/2026; é necessário aguardar o próximo ciclo ou resolver o plano no painel antes de publicar as variáveis novas. A versão anterior permanece online. O saldo OpenAI observado continua em US$ 0,00. Ainda não foi possível validar uma resposta real: faltam novo deploy e saldo OpenAI. As compras Pix permanecem bloqueadas.
+Não é um modelo generativo e não conversa sobre qualquer assunto. Quando não reconhece o pedido, apresenta os comandos disponíveis. Não consulta notícias, clima ou outros serviços e não determina aptidão ou profissão.
 
-A tela de pacotes está ligada ao livro de créditos privado e ao fluxo de Pix manual. A compra permanece desativada até terminar a configuração e validar o Mentor. Consulte CREDITOS.md.
+O botão + adiciona até três referências pessoais de 1 MB cada. Os arquivos não são enviados a um servidor; ficam apenas na memória da conversa. O Mentor não analisa fotos, PDFs, TXT ou a qualidade dos projetos. O texto da resposta deixa isso explícito e propõe um roteiro de autoavaliação.
 
-## Ativação na Netlify (instalação nova ou substituição da chave)
+A conversa guarda até vinte mensagens na memória da página. Recarregar, desconectar ou recomeçar a jornada limpa a conversa. O progresso do app continua salvo localmente e separado por conta.
 
-1. Crie uma chave de API em https://platform.openai.com/api-keys, em um projeto com acesso ao modelo e faturamento/saldo configurados.
-2. Abra o projeto timely-brioche-70b62e na Netlify: Project configuration → Environment variables → Add a variable.
-3. Nome: OPENAI_API_KEY. Valor: a chave criada. Marque como segredo e inclua Functions e Production. Não publique a chave, não a envie em conversas e não a grave em arquivos do site.
-4. Opcional: OPENAI_MODEL com valor gpt-4.1-mini. Esse é o padrão quando a variável não existe.
-5. Faça um novo deploy em Deploys → Trigger deploy → Deploy site.
-6. Entre no app, abra Mentor Rumo e envie um projeto curto. Confirme que recebe um feedback real. Teste também foto e PDF com conteúdo sem informações pessoais.
+## Voz
 
-As variáveis de autenticação existentes continuam necessárias. Não as substitua.
+A voz é opcional e exige ação da pessoa. O reconhecimento não está disponível em todos os navegadores, pode usar o serviço de voz do navegador e depender de internet. A transcrição permanece no campo para revisão antes de Enviar. A leitura usa SpeechSynthesis, preferindo uma voz pt-BR disponível no dispositivo. Se não houver suporte, o texto continua funcionando.
 
-## Supabase
+## Servidor e custos
 
-A migração supabase/mentor-quota.sql já foi aplicada no projeto usado pelo app. Em outro projeto, execute-a uma vez no SQL Editor. Ela cria uma tabela privada com RLS e uma função que usa o usuário autenticado, sem receber IDs fornecidos pelo cliente. A chave administrativa não é necessária.
+O login continua no backend existente, com Supabase Auth e cookies protegidos. Não é necessário cadastrar OPENAI_API_KEY, OPENAI_MODEL ou RUMO_CREDIT_SERVER_TOKEN para o Mentor gratuito. Variáveis antigas não são usadas por ele. Esta mudança não revoga chaves nem altera contratos de hospedagem.
 
-## Comportamento e limites
+O endpoint antigo `/.netlify/functions/mentor` responde HTTP 410 e nunca chama a OpenAI ou o livro de créditos. Novos pedidos em `/.netlify/functions/credits` também recebem 410. Os dados privados do livro antigo não são apagados. Não há tela de compra de créditos no app.
 
-- Login obrigatório, com sessão verificada no servidor a cada envio.
-- Até 20 tentativas de geração por conta por dia, com virada à meia-noite UTC. Falhas após reservar a tentativa também a consomem. O limite não impede abuso por múltiplas contas; acompanhe uso e custos no provedor.
-- Até três anexos: PNG, JPEG, WebP, PDF ou TXT; até 1 MB por arquivo. TXT limitado a 12.000 caracteres.
-- O modelo recebe a mensagem, até oito mensagens anteriores de texto e os anexos do envio atual. Anexos antigos não são reenviados automaticamente.
-- O contexto da jornada é opcional e pode ser desligado na tela do Mentor.
-- Ditado e leitura de voz usam os recursos do navegador; disponibilidade depende do dispositivo.
-- O feedback é exploratório, sem determinar profissão ou aptidão psicológica.
+A gratuidade se refere às respostas do Mentor e à ausência de API paga de IA. Hospedagem e os serviços de login/e-mail seguem seus próprios planos e limites.
 
-## Dados e segurança
+## Verificação
 
-A chave é usada apenas pela Netlify Function. Os cookies de login são HttpOnly; o backend valida origem, sessão, tamanho e formato dos anexos. Arquivos não são publicados nem salvos em Storage por esta integração. Mensagens, anexos e contexto selecionado são enviados à OpenAI para processamento. A solicitação usa store:false, o que não equivale a uma garantia de retenção zero; aplicam-se as políticas do provedor. Evite informações pessoais ou sensíveis.
+- `node --test tests/security.cjs tests/mentor.cjs tests/credits.cjs`
+- `node tests/gate.cjs`
+- `node tests/mentor-ui.cjs`
+- `node tests/settings-account.cjs`
 
-A conversa fica na memória da página e é apagada ao recarregar ou sair. O progresso da jornada mantém o armazenamento local anterior. Nenhuma ferramenta externa ou acesso à internet é concedido ao modelo.
-
-## Verificação local
-
-node --test tests/security.cjs tests/mentor.cjs
-
-Com jsdom instalado em auth-test-deps ao lado da pasta do projeto:
-
-node tests/gate.cjs
-node tests/mentor-ui.cjs
-node tests/settings-account.cjs
-
-Os testes de IA usam fetch simulado e não geram cobrança. Configure limites/alertas de uso no projeto da OpenAI e monitore os custos depois de ativar.
-
-
-
-## Créditos Pix
-
-O Mentor exige saldo no livro privado e o segredo RUMO_CREDIT_SERVER_TOKEN. A reserva acontece antes de chamar a IA, e falhas devolvem o crédito. O limite diário de 20 mensagens continua separado do saldo comprado. Veja CREDITOS.md para configuração e estado de ativação.
+Os testes verificam que nenhuma conversa solicita uma API de Mentor ou de créditos, além de contexto opcional, mapa indefinido, navegação, voz simulada, referências pessoais, limite de memória e logout. Voz real em cada dispositivo depende do navegador e da permissão da pessoa.

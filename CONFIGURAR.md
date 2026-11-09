@@ -4,7 +4,7 @@ O projeto já está conectado ao GitHub e publicado na Netlify. Preserve as vari
 Não há login fictício, senha universal nem modo de pular a confirmação.
 
 ## Publicar
-Este pacote contém três Netlify Functions: autenticação, Mentor e créditos Pix. Não basta arrastar a pasta para Netlify Drop.
+Este pacote contém o backend de autenticação e dois endpoints legados desativados para geração paga e novas compras de créditos. Não basta arrastar a pasta para Netlify Drop.
 Importe os arquivos em um repositório Git e conecte-o à Netlify, com netlify.toml na raiz.
 A pasta publicada é public; netlify/functions contém o servidor e netlify/lib contém o módulo compartilhado de créditos.
 Alternativamente, use o fluxo de deploy com functions da CLI oficial da Netlify.
@@ -54,8 +54,7 @@ A sessão é revalidada no servidor ao carregar a página e ao voltar à aba.
 - Progresso continua local neste navegador, separado por ID de conta. Isso NÃO é criptografia
   nem armazenamento em nuvem; quem controla o computador pode inspecionar o armazenamento.
   O progresso anônimo anterior não é atribuído automaticamente a uma conta.
-- O Mentor usa uma tabela privada de contagem diária, acessível apenas por uma função que verifica auth.uid(). Não há listagem de e-mails ou service_role. Não foi criado banco de
-  perfis. Se adicionar dados remotos, exigir autorização por usuário e RLS em cada tabela.
+- O Mentor gratuito escolhe respostas no navegador, sem enviar perguntas ou arquivos à OpenAI. A conversa é temporária e não consome saldo. Os dados legados de créditos continuam privados no Supabase. Se adicionar dados remotos, exigir autorização por usuário e RLS em cada tabela.
 - O dispositivo pode reter acesso visual até recarregar/retomar a aba; requisições de
   autenticação continuam validadas no servidor. Tokens revogados podem ter limites
   de invalidação próprios do provedor até a expiração.
@@ -73,4 +72,4 @@ Ainda faltam testes reais de envio, recebimento, confirmação, recuperação, l
 e troca de contas em HTTPS após configurar Supabase e SMTP.
 
 ## Mentor Rumo
-Consulte MENTOR.md para a integração com OpenAI e CREDITOS.md para a operação e as pendências de ativação do Pix manual. A chave fica somente no servidor.
+Consulte MENTOR.md para o assistente gratuito e CREDITOS.md para o encerramento das novas compras. A conversa não precisa de chaves OpenAI.

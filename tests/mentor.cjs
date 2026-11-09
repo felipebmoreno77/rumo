@@ -1,21 +1,9 @@
-const {test}=require('node:test');const assert=require('node:assert/strict');
-const {handler,contentFor}=require('../netlify/functions/mentor.cjs');
-process.env.APP_ORIGIN='https://rumo.example';process.env.SUPABASE_URL='https://example.supabase.co';process.env.SUPABASE_PUBLISHABLE_KEY='publishable-test';process.env.OPENAI_API_KEY='test-only-key';process.env.RUMO_CREDIT_SERVER_TOKEN='test-ledger-token-not-production';
-const event=(overrides={})=>({httpMethod:'POST',headers:{origin:process.env.APP_ORIGIN,'content-type':'application/json',cookie:'__Host-rumo-access=valid'},body:JSON.stringify({message:'Quero melhorar meu projeto',attachments:[],history:[]}),...overrides});
-const res=(data,status=200)=>({ok:status===200,status,json:async()=>data});
-test('anonymous never reaches AI or quota',async()=>{global.fetch=()=>{throw Error('no calls')};assert.equal((await handler(event({headers:{origin:process.env.APP_ORIGIN,'content-type':'application/json'}}))).statusCode,401)});
-test('forged origin rejected',async()=>{global.fetch=()=>{throw Error('no calls')};assert.equal((await handler(event({headers:{origin:'https://bad.example','content-type':'application/json'}}))).statusCode,403)});
-test('rejects unsupported, oversized, and disguised files',()=>{assert.throws(()=>contentFor({message:'x',attachments:[{name:'x.pdf',type:'application/pdf',data:'data:application/pdf;base64,aGVsbG8='}]}));assert.throws(()=>contentFor({message:'x',attachments:[{name:'x.exe',type:'application/octet-stream',data:'x'}]}));assert.throws(()=>contentFor({message:'x',attachments:[{name:'x',type:'text/plain',text:'x'.repeat(12001)}]}))});
-test('validated PDF and image encoded as content, not instructions',()=>{const parts=contentFor({message:'feedback',attachments:[{name:'x.pdf',type:'application/pdf',data:'data:application/pdf;base64,'+Buffer.from('%PDF-1.4 test').toString('base64')}]});assert.equal(parts[1].type,'input_file')});
-test('missing API key fails honestly without charging quota',async()=>{const old=process.env.OPENAI_API_KEY;delete process.env.OPENAI_API_KEY;global.fetch=async url=>{assert.match(url,/auth\/v1\/user/);return res({id:'a',email_confirmed_at:'today'})};const r=await handler(event());assert.equal(r.statusCode,503);assert.match(r.body,/aguardando/);process.env.OPENAI_API_KEY=old});
-const mock=(options={})=>{const actions=[];let ai=0;global.fetch=async(url,opts)=>{
- if(url.includes('/auth/'))return res({id:'a',email_confirmed_at:'today'});
- if(url.includes('rumo_pix_credit_api')){const b=JSON.parse(opts.body);actions.push(b);assert.equal(b.p_server_token,process.env.RUMO_CREDIT_SERVER_TOKEN);return res(b.p_action==='reserve'?{ok:options.balance!==0,balance:options.balance??10}:{ok:true})}
- if(url.includes('/rpc/'))return res(options.quota!==false);
- ai++;const b=JSON.parse(opts.body);assert.equal(b.store,false);assert.equal(b.max_output_tokens,700);return options.error?res({},500):res({output:[{type:'message',content:[{type:'output_text',text:'Faça um teste curto.'}]}]});
- };return {actions,ai:()=>ai}};
-test('quota rejection prevents AI and refunds the reserved credit',async()=>{const m=mock({quota:false});assert.equal((await handler(event())).statusCode,429);assert.equal(m.ai(),0);assert.equal(m.actions.at(-1).p_action,'finish');assert.equal(m.actions.at(-1).p_data.success,false)});
-test('zero balance never reaches quota or AI',async()=>{const m=mock({balance:0});assert.equal((await handler(event())).statusCode,402);assert.equal(m.ai(),0);assert.equal(m.actions.length,1)});
-test('real response validates session and consumes one reserved credit',async()=>{const m=mock();const r=await handler(event());assert.equal(r.statusCode,200);assert.equal(m.ai(),1);assert.equal(JSON.parse(r.body).answer,'Faça um teste curto.');assert.equal(m.actions.length,2);assert.equal(m.actions[0].p_data.request_id,m.actions[1].p_data.request_id);assert.equal(m.actions[1].p_data.success,true);assert.equal(r.body.includes('test-only-key'),false)});
-test('provider failure refunds without a canned response',async()=>{const m=mock({error:true});const r=await handler(event());assert.equal(r.statusCode,503);assert.equal('answer' in JSON.parse(r.body),false);assert.equal(m.actions.at(-1).p_data.success,false)});
-test('missing ledger secret never reserves or calls AI',async()=>{const secret=process.env.RUMO_CREDIT_SERVER_TOKEN;delete process.env.RUMO_CREDIT_SERVER_TOKEN;const m=mock();assert.equal((await handler(event())).statusCode,503);assert.equal(m.actions.length,0);assert.equal(m.ai(),0);process.env.RUMO_CREDIT_SERVER_TOKEN=secret});
+const {test}=require('node:test'),assert=require('node:assert/strict');
+const {handler}=require('../netlify/functions/mentor.cjs');
+test('retired paid endpoint never calls a provider or debits credits',async()=>{
+ process.env.OPENAI_API_KEY='test-key-must-not-be-used';process.env.RUMO_CREDIT_SERVER_TOKEN='test-credit-token-must-not-be-used';
+ global.fetch=()=>{throw Error('A paid network request must never run')};
+ for(const event of [{},{httpMethod:'POST',headers:{cookie:'__Host-rumo-access=test'},body:JSON.stringify({message:'Meu projeto',attachments:[]})},{httpMethod:'POST',body:'malformed'},{httpMethod:'GET'}]){
+ const r=await handler(event);assert.equal(r.statusCode,410);assert.match(r.body,/gratuito/);assert.equal(JSON.parse(r.body).answer,undefined);assert.equal(r.body.includes(process.env.OPENAI_API_KEY),false);assert.equal(r.headers['Cache-Control'],'no-store');
+ }
+});
