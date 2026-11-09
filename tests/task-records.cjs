@@ -7,7 +7,7 @@ async function boot(saved){const dom=new JSDOM(html,{url:'https://rumo.example',
 function input(dom,selector,text){const el=dom.window.document.querySelector(selector);assert.ok(el,selector);el.value=text;el.dispatchEvent(new dom.window.Event('input',{bubbles:true}));}
 function plan(d,k){d.querySelector('[data-act=routines]').click();d.querySelector('[data-route='+k+']').click();}
 (async()=>{
- const legacy={version:2,answers:Array(10).fill(1),activeRoute:'creative',routeChosen:true,routineState:{creative:{days:Array.from({length:14},(_,i)=>({registered:i<7,mood:i<7?'liked':'',note:'Reflexão antiga '+i})),openDay:0}},youth:{}};
+ const legacy={version:2,mapVersion:'balanced-2026-11-v1',answers:Array(10).fill(1),activeRoute:'creative',routeChosen:true,routineState:{creative:{days:Array.from({length:14},(_,i)=>({registered:i<7,mood:i<7?'liked':'',note:'Reflexão antiga '+i})),openDay:0}},youth:{}};
  let dom=await boot(legacy),d=dom.window.document;
  plan(d,'creative');assert.equal(d.querySelector('[data-day-task-response="0"]').value,'');assert.equal(d.querySelector('[data-day-note="0"]').value,'Reflexão antiga 0');
  const text='Título do projeto\n<img src=x onerror="alert(1)"> & ideias para testar';
@@ -27,5 +27,14 @@ function plan(d,k){d.querySelector('[data-act=routines]').click();d.querySelecto
  input(dom,'[data-day-task-response="0"]','Comparei duas maneiras de organizar minhas notas.');
  d.querySelector('[data-mood-choice="0"][data-mood-value=notdone]').click();assert.equal(d.querySelector('[data-day-task-response="0"]').value,'Comparei duas maneiras de organizar minhas notas.');
  d.querySelector('[data-register-day="0"]').click();assert.ok(d.querySelector('[data-daily=edit-record]'));d.querySelector('[data-daily=edit-record]').click();assert.equal(d.querySelector('[data-day-task-response="0"]').value,'Comparei duas maneiras de organizar minhas notas.');
- dom.window.close();console.log('Registros de tarefas: nove caminhos, tela diária/plano, rascunhos, recarga, histórico, exportação e compatibilidade antiga OK.');
+ dom.window.close();
+ // A revisão do mapa não apaga experiências nem interpreta índices antigos como respostas novas.
+ const old=JSON.parse(JSON.stringify(saved));delete old.mapVersion;
+ dom=await boot(old);d=dom.window.document;assert.match(d.body.textContent,/Quatro perguntas novas/);
+ let migrated=JSON.parse(dom.window.localStorage.getItem(key));for(const i of [0,2,3,7])assert.equal(migrated.answers[i],null);
+ for(const i of [1,4,5,6,8,9])assert.equal(migrated.answers[i],old.answers[i]);
+ assert.equal(migrated.routineState.creative.days[0].taskResponse,text);assert.equal(migrated.routineState.creative.days[0].registered,true);
+ d.querySelector('[data-act=question]').click();d.querySelector('[data-option=0]').click();await pause();migrated=JSON.parse(dom.window.localStorage.getItem(key));assert.equal(migrated.answers[0],0);
+ dom.window.close();dom=await boot(migrated);await pause();assert.equal(JSON.parse(dom.window.localStorage.getItem(key)).answers[0],0);dom.window.close();
+ console.log('Registros de tarefas: nove caminhos, tela diária/plano, rascunhos, recarga, histórico, exportação e compatibilidade antiga OK.');
 })().catch(e=>{console.error(e);process.exitCode=1});
