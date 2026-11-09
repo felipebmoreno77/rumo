@@ -10,7 +10,7 @@ Configuração de produção no Workers Builds:
 - Diretório: `/`
 - Token: o token de build já gerenciado pela Cloudflare, em `CLOUDFLARE_API_TOKEN`.
 
-O deploy usa a API oficial com Node 22 ou mais recente, sem instalação de pacotes. Envia somente `index.html` como arquivo público e o módulo de servidor como código do Worker. Reutiliza as quatro configurações existentes de autenticação com `inherit` e falha se alguma estiver ausente; não grava credenciais no GitHub. Não usa OpenAI, pagamentos ou chaves administrativas do Supabase.
+O deploy usa a API oficial com Node 22 ou mais recente, sem instalação de pacotes. Envia `index.html` e os quatro ícones explicitamente permitidos como arquivos públicos e o módulo de servidor como código do Worker. Reutiliza as quatro configurações existentes de autenticação com `inherit` e falha se alguma estiver ausente; não grava credenciais no GitHub. Não usa OpenAI, pagamentos ou chaves administrativas do Supabase.
 
 As variáveis de runtime `APP_ORIGIN`, `APP_ADDITIONAL_ORIGIN`, `SUPABASE_URL` e `SUPABASE_PUBLISHABLE_KEY` ficam no Worker. Não confundir com variáveis de build. `APP_ORIGIN` deve corresponder exatamente à origem HTTPS do app. Os links antigos e o DNS continuam independentes desta publicação.
 

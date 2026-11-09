@@ -8,7 +8,12 @@ function prepare(){
  // Lista explícita: nunca publicar código de servidor, SQL, configurações ou backups.
  const bytes=fs.readFileSync(path.join(dir,'index.html'));
  const hash=crypto.createHash('sha256').update(bytes).digest('hex').slice(0,32);
- return {manifest:{'/index.html':{hash,size:bytes.length}},bytes,hash,
+ const assets={[hash]:{bytes,type:'text/html; charset=utf-8'}},manifest={'/index.html':{hash,size:bytes.length}};
+ for(const [name,type] of [['favicon.svg','image/svg+xml'],['favicon.ico','image/x-icon'],['favicon-32x32.png','image/png'],['apple-touch-icon.png','image/png']]){
+  const file=fs.readFileSync(path.join(dir,name)),digest=crypto.createHash('sha256').update(file).digest('hex').slice(0,32);
+  manifest['/'+name]={hash:digest,size:file.length};assets[digest]={bytes:file,type};
+ }
+ return {manifest,assets,bytes,hash,
   worker:fs.readFileSync(path.join(dir,'_worker.js'),'utf8'),
   headers:fs.readFileSync(path.join(dir,'_headers'),'utf8')};
 }
@@ -29,8 +34,9 @@ async function deploy({token,fetcher=fetch,prepared=prepare()}={}){
  for(const bucket of session.buckets){
   const form=new FormData();
   for(const hash of bucket){
-   if(hash!==prepared.hash)throw Error('Arquivo inesperado solicitado pela Cloudflare.');
-   form.append(hash,new Blob([prepared.bytes.toString('base64')],{type:'text/html; charset=utf-8'}));
+   const asset=prepared.assets[hash];
+   if(!asset)throw Error('Arquivo inesperado solicitado pela Cloudflare.');
+   form.append(hash,new Blob([asset.bytes.toString('base64')],{type:asset.type}));
   }
   const result=await api('/workers/assets/upload',{body:form,bearer:session.jwt,query:'?base64=true'});
   if(result?.jwt)completion=result.jwt;
