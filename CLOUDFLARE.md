@@ -70,3 +70,21 @@ node --test tests/cloudflare.cjs tests/security.cjs tests/mentor.cjs tests/credi
 Os testes locais usam provedores simulados. Eles cobrem cookies separados, sessão, renovação, código, senha mínima, origem, requisições grandes, isolamento das variáveis e encerramento do fluxo pago. Não comprovam entrega real de e-mail ou execução na conta Cloudflare.
 
 `cloudflare/wrangler.example.toml` é opcional para uso da CLI. Copie-o para a raiz como `wrangler.toml` e ajuste o nome para o projeto real antes de usar a CLI. A publicação Git descrita acima usa as configurações do painel e não exige esse arquivo.
+# Publicação ativa: Cloudflare Workers
+
+O projeto `rumo` usa Workers com Static Assets, ligado a `felipebmoreno77/rumo`, branch `main`.
+Endereço: https://rumo.felipebmoreno.workers.dev/
+
+Configuração de produção no Workers Builds:
+
+- Build: `node scripts/build-cloudflare.cjs`
+- Deploy: `node scripts/deploy-cloudflare.cjs`
+- Diretório: `/`
+- Token: o token de build já gerenciado pela Cloudflare, em `CLOUDFLARE_API_TOKEN`.
+
+O deploy usa a API oficial com Node 22 ou mais recente, sem instalação de pacotes. Envia somente `index.html` como arquivo público e o módulo de servidor como código do Worker. Reutiliza as três configurações existentes de autenticação com `inherit` e falha se alguma estiver ausente; não grava credenciais no GitHub. Não usa OpenAI, pagamentos ou chaves administrativas do Supabase.
+
+As variáveis de runtime `APP_ORIGIN`, `SUPABASE_URL` e `SUPABASE_PUBLISHABLE_KEY` ficam no Worker. Não confundir com variáveis de build. `APP_ORIGIN` deve corresponder exatamente à origem HTTPS do app. Os links antigos e o DNS continuam independentes desta publicação.
+
+As instruções abaixo são uma alternativa para **Cloudflare Pages**, não a configuração do Worker ativo. O ZIP preparado anteriormente é específico para Pages; não deve ser usado como substituto da publicação automática do Worker.
+
