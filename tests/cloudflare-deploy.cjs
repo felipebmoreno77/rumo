@@ -16,7 +16,7 @@ test('publicação só inclui o HTML público e preserva a autenticação sem co
  const blob=calls[1].options.body.get(prepared.hash);assert.deepEqual(Buffer.from(await blob.text(),'base64'),prepared.bytes);
  const meta=JSON.parse(await calls[2].options.body.get('metadata').text());
  assert.equal(meta.assets.jwt,'completion-example');assert.equal(meta.assets.config.not_found_handling,'none');
- assert.deepEqual(meta.bindings.filter(x=>x.type==='inherit').map(x=>x.name),['APP_ORIGIN','SUPABASE_URL','SUPABASE_PUBLISHABLE_KEY']);
+ assert.deepEqual(meta.bindings.filter(x=>x.type==='inherit').map(x=>x.name),['APP_ORIGIN','APP_ADDITIONAL_ORIGIN','SUPABASE_URL','SUPABASE_PUBLISHABLE_KEY']);
  assert(!JSON.stringify(meta).includes('test-only-not-a-credential'));
  assert(calls[2].url.endsWith('?bindings_inherit=strict'));
 });

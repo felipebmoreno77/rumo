@@ -30,10 +30,13 @@ export function createRumoWorker(makeAuthHandler){return {
   }
   if(request.method!=='POST')return json(405,'Método não permitido.');
   if(!env.APP_ORIGIN)return json(503,'O login ainda não foi conectado. Tente novamente depois.');
-  if(request.headers.get('origin')!==env.APP_ORIGIN||!request.headers.get('content-type')?.startsWith('application/json'))return json(403,'Solicitação não autorizada.');
+  const origin=request.headers.get('origin');
+  const allowed=[env.APP_ORIGIN,env.APP_ADDITIONAL_ORIGIN].filter(Boolean);
+  // Cada domínio só aceita formulários da própria origem. Nenhum curinga ou confiança no Host recebido.
+  if(!allowed.includes(origin)||origin!==new URL(request.url).origin||!request.headers.get('content-type')?.startsWith('application/json'))return json(403,'Solicitação não autorizada.');
   let body;try{body=await readSmallBody(request)}catch(e){return json(e instanceof RangeError?413:400,e instanceof RangeError?'Solicitação muito grande.':'Solicitação inválida.')}
   try{
-   const result=await makeAuthHandler({APP_ORIGIN:env.APP_ORIGIN,SUPABASE_URL:env.SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY:env.SUPABASE_PUBLISHABLE_KEY})({httpMethod:request.method,headers:Object.fromEntries(request.headers),body,isBase64Encoded:false});
+   const result=await makeAuthHandler({APP_ORIGIN:origin,SUPABASE_URL:env.SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY:env.SUPABASE_PUBLISHABLE_KEY})({httpMethod:request.method,headers:Object.fromEntries(request.headers),body,isBase64Encoded:false});
    const headers=new Headers({...securityHeaders,...result.headers});
    for(const cookie of result.multiValueHeaders?.['Set-Cookie']||[])headers.append('Set-Cookie',cookie);
    return new Response(result.body,{status:result.statusCode,headers});

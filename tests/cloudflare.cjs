@@ -7,6 +7,20 @@ const env={APP_ORIGIN:'https://rumo.pages.dev',SUPABASE_URL:'https://test.supaba
 const req=(body={action:'session'},options={})=>new Request(env.APP_ORIGIN+(options.path||'/.netlify/functions/auth'),{method:options.method||'POST',headers:{origin:options.origin||env.APP_ORIGIN,'content-type':options.type||'application/json',...options.headers},...(options.method==='GET'?{}:{body:typeof body==='string'?body:JSON.stringify(body)})});
 const mock=(data,status=200)=>({ok:status===200,status,json:async()=>data});
 const user={id:'test-user',email:'user@example.com',email_confirmed_at:'today'};
+test('domínio próprio e endereço antigo aceitam apenas autenticação da mesma origem configurada',async()=>{
+ const {default:w}=await loaded;const runtime={...env,APP_ADDITIONAL_ORIGIN:'https://rumolearn.com.br'};
+ global.fetch=async()=>mock({user,access_token:'private-access',refresh_token:'private-refresh'});
+ const body=JSON.stringify({action:'login',email:user.email,password:'1234567890'});
+ const on=(host,origin)=>new Request(host+'/api/auth',{method:'POST',headers:{origin,'content-type':'application/json'},body});
+ for(const host of [runtime.APP_ORIGIN,runtime.APP_ADDITIONAL_ORIGIN]){
+  const r=await w.fetch(on(host,host),runtime);assert.equal(r.status,200);
+  assert(!r.headers.getSetCookie().join(';').includes('Domain='));
+ }
+ global.fetch=()=>{throw Error('Solicitação rejeitada não pode alcançar Supabase')};
+ assert.equal((await w.fetch(on(runtime.APP_ADDITIONAL_ORIGIN,runtime.APP_ORIGIN),runtime)).status,403);
+ assert.equal((await w.fetch(on('https://intruso.example','https://intruso.example'),runtime)).status,403);
+ assert.equal((await w.fetch(on('https://rumolearn.com.br.intruso.example','https://rumolearn.com.br.intruso.example'),runtime)).status,403);
+});
 test('built Worker serves assets and only routes API namespaces',async()=>{const {default:worker}=await loaded;assert.equal(await (await worker.fetch(new Request(env.APP_ORIGIN+'/'),env)).text(),'static-app');assert.equal((await worker.fetch(req({}, {path:'/api/unknown'}),env)).status,404);const routes=JSON.parse(fs.readFileSync(path.join(root,'cloudflare-dist/_routes.json')));assert.deepEqual(routes.include,['/api/*','/.netlify/functions/*']);assert.equal(routes.include.includes('/*'),false);const html=fs.readFileSync(path.join(root,'cloudflare-dist/index.html'),'utf8');assert.ok(html.includes("fetch('/api/auth'"));assert.equal(html.includes('freePreviewSession'),false)});
 test('missing settings, wrong origin and unsupported method fail without network',async()=>{const {default:w}=await loaded;global.fetch=()=>{throw Error('No provider call allowed')};assert.equal((await w.fetch(req(),{})).status,503);assert.equal((await w.fetch(req({}, {origin:'https://bad.example'}),env)).status,403);assert.equal((await w.fetch(req({}, {method:'GET'}),env)).status,405);assert.equal((await w.fetch(req({}, {type:'text/plain'}),env)).status,403)});
 test('anonymous session clears two secure cookies without authenticating',async()=>{const {default:w}=await loaded;global.fetch=()=>{throw Error('No provider call allowed')};const r=await w.fetch(req(),env);assert.equal(r.status,401);const cookies=r.headers.getSetCookie();assert.equal(cookies.length,2);for(const c of cookies)for(const flag of ['HttpOnly','Secure','SameSite=Lax','Path=/','Max-Age=0'])assert.ok(c.includes(flag))});

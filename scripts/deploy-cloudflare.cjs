@@ -38,7 +38,7 @@ async function deploy({token,fetcher=fetch,prepared=prepare()}={}){
  if(!completion)throw Error('Os arquivos não foram confirmados; versão atual preservada.');
  const metadata={main_module:'worker.mjs',compatibility_date:'2026-11-04',compatibility_flags:[],
   // Mantém apenas as configurações já autorizadas de autenticação.
-  bindings:[{name:'ASSETS',type:'assets'},...['APP_ORIGIN','SUPABASE_URL','SUPABASE_PUBLISHABLE_KEY'].map(name=>({name,type:'inherit'}))],
+  bindings:[{name:'ASSETS',type:'assets'},...['APP_ORIGIN','APP_ADDITIONAL_ORIGIN','SUPABASE_URL','SUPABASE_PUBLISHABLE_KEY'].map(name=>({name,type:'inherit'}))],
   assets:{jwt:completion,config:{_headers:prepared.headers,run_worker_first:['/api/*','/.netlify/functions/*'],not_found_handling:'none'}},
   observability:{enabled:true,head_sampling_rate:0.1,redact_query_string:true,logs:{enabled:true,invocation_logs:true,persist:true},traces:{enabled:true,head_sampling_rate:0.1,persist:true}}};
  const form=new FormData();

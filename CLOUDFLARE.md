@@ -1,3 +1,32 @@
+# Publicação ativa: Cloudflare Workers
+
+O projeto `rumo` usa Workers com Static Assets, ligado a `felipebmoreno77/rumo`, branch `main`.
+Endereço: https://rumo.felipebmoreno.workers.dev/
+
+Configuração de produção no Workers Builds:
+
+- Build: `node scripts/build-cloudflare.cjs`
+- Deploy: `node scripts/deploy-cloudflare.cjs`
+- Diretório: `/`
+- Token: o token de build já gerenciado pela Cloudflare, em `CLOUDFLARE_API_TOKEN`.
+
+O deploy usa a API oficial com Node 22 ou mais recente, sem instalação de pacotes. Envia somente `index.html` como arquivo público e o módulo de servidor como código do Worker. Reutiliza as quatro configurações existentes de autenticação com `inherit` e falha se alguma estiver ausente; não grava credenciais no GitHub. Não usa OpenAI, pagamentos ou chaves administrativas do Supabase.
+
+As variáveis de runtime `APP_ORIGIN`, `APP_ADDITIONAL_ORIGIN`, `SUPABASE_URL` e `SUPABASE_PUBLISHABLE_KEY` ficam no Worker. Não confundir com variáveis de build. `APP_ORIGIN` deve corresponder exatamente à origem HTTPS do app. Os links antigos e o DNS continuam independentes desta publicação.
+
+As instruções abaixo são uma alternativa para **Cloudflare Pages**, não a configuração do Worker ativo. O ZIP preparado anteriormente é específico para Pages; não deve ser usado como substituto da publicação automática do Worker.
+
+## Domínio próprio preparado
+
+O domínio `rumolearn.com.br` foi associado ao Worker e a zona Cloudflare criada no plano Free. A ativação depende da delegação DNS no registrador; o cadastro do domínio na Cloudflare não conclui essa delegação. Servidores atribuídos: `eugene.ns.cloudflare.com` e `lila.ns.cloudflare.com`.
+
+Foram copiados os registros TXT de DKIM/DMARC e CNAME de `send`/`rsend` do Resend, sem proxy. Nenhum segredo de envio foi copiado.
+
+`APP_ORIGIN` mantém a origem workers.dev atual; `APP_ADDITIONAL_ORIGIN` autoriza somente `https://rumolearn.com.br`. O Worker exige que Origin e URL da requisição sejam iguais e estejam nessa lista explícita. Assim o login do endereço antigo continua disponível durante a propagação. Não há curingas nem compartilhamento de cookies entre domínios.
+
+
+---
+
 # Publicar o Rumo na Cloudflare Pages
 
 Esta versão inclui o Mentor gratuito e o mesmo núcleo de autenticação usado na Netlify. O código está preparado para Cloudflare Pages, mas a publicação e os testes reais de login/e-mail ainda precisam ser concluídos na conta Cloudflare escolhida. O endereço anterior não foi trocado.
@@ -70,21 +99,3 @@ node --test tests/cloudflare.cjs tests/security.cjs tests/mentor.cjs tests/credi
 Os testes locais usam provedores simulados. Eles cobrem cookies separados, sessão, renovação, código, senha mínima, origem, requisições grandes, isolamento das variáveis e encerramento do fluxo pago. Não comprovam entrega real de e-mail ou execução na conta Cloudflare.
 
 `cloudflare/wrangler.example.toml` é opcional para uso da CLI. Copie-o para a raiz como `wrangler.toml` e ajuste o nome para o projeto real antes de usar a CLI. A publicação Git descrita acima usa as configurações do painel e não exige esse arquivo.
-# Publicação ativa: Cloudflare Workers
-
-O projeto `rumo` usa Workers com Static Assets, ligado a `felipebmoreno77/rumo`, branch `main`.
-Endereço: https://rumo.felipebmoreno.workers.dev/
-
-Configuração de produção no Workers Builds:
-
-- Build: `node scripts/build-cloudflare.cjs`
-- Deploy: `node scripts/deploy-cloudflare.cjs`
-- Diretório: `/`
-- Token: o token de build já gerenciado pela Cloudflare, em `CLOUDFLARE_API_TOKEN`.
-
-O deploy usa a API oficial com Node 22 ou mais recente, sem instalação de pacotes. Envia somente `index.html` como arquivo público e o módulo de servidor como código do Worker. Reutiliza as três configurações existentes de autenticação com `inherit` e falha se alguma estiver ausente; não grava credenciais no GitHub. Não usa OpenAI, pagamentos ou chaves administrativas do Supabase.
-
-As variáveis de runtime `APP_ORIGIN`, `SUPABASE_URL` e `SUPABASE_PUBLISHABLE_KEY` ficam no Worker. Não confundir com variáveis de build. `APP_ORIGIN` deve corresponder exatamente à origem HTTPS do app. Os links antigos e o DNS continuam independentes desta publicação.
-
-As instruções abaixo são uma alternativa para **Cloudflare Pages**, não a configuração do Worker ativo. O ZIP preparado anteriormente é específico para Pages; não deve ser usado como substituto da publicação automática do Worker.
-
