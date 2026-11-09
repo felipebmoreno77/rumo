@@ -1,16 +1,17 @@
 'use strict';
 const cookie=(name,value,age)=>name+'='+encodeURIComponent(value)+'; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age='+age;
 const clear=()=>[cookie('__Host-rumo-access','',0),cookie('__Host-rumo-refresh','',0)];
-exports.handler=async(event)=>{
+async function handleAuth(event,env){
  const headers={'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'};
  const reply=(statusCode,data,cookies=[])=>({statusCode,headers,multiValueHeaders:{'Set-Cookie':cookies},body:JSON.stringify(data)});
- const env=process.env, origin=env.APP_ORIGIN, base=env.SUPABASE_URL, key=env.SUPABASE_PUBLISHABLE_KEY;
+ const origin=env.APP_ORIGIN, base=env.SUPABASE_URL, key=env.SUPABASE_PUBLISHABLE_KEY;
  if(!origin||!base||!key||!/^https:\/\//.test(origin)||!/^https:\/\//.test(base))return reply(503,{error:'O login ainda não foi conectado. Tente novamente depois.'});
  const h=Object.fromEntries(Object.entries(event.headers||{}).map(([k,v])=>[k.toLowerCase(),v]));
  if(event.httpMethod!=='POST')return reply(405,{error:'Método não permitido.'});
  if(h.origin!==origin||!h['content-type']?.startsWith('application/json'))return reply(403,{error:'Solicitação não autorizada.'});
  if((event.body||'').length>4096)return reply(413,{error:'Solicitação muito grande.'});
  let b;try{b=JSON.parse(event.body||'{}')}catch{return reply(400,{error:'Solicitação inválida.'})}
+ if(!b||typeof b!=='object'||Array.isArray(b))return reply(400,{error:'Solicitação inválida.'});
  const api=async(path,body,token,method='POST')=>{
   const r=await fetch(base.replace(/\/$/,'')+'/auth/v1/'+path,{method,headers:{apikey:key,'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},...(body?{body:JSON.stringify(body)}:{}),signal:AbortSignal.timeout(10000)});
   const d=await r.json().catch(()=>({}));return {ok:r.ok,status:r.status,data:d};
@@ -71,4 +72,8 @@ exports.handler=async(event)=>{
   }
   return reply(400,{error:'Solicitação inválida.'});
  }catch{return reply(503,{error:'Não foi possível conectar. Tente novamente em instantes.'})}
-};
+
+}
+// A configuração é local à requisição. Nenhuma variável global é trocada entre contas/ambientes.
+exports.createAuthHandler=env=>event=>handleAuth(event,env||{});
+exports.handler=event=>handleAuth(event,process.env);

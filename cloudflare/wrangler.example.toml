@@ -1,0 +1,5 @@
+name = "rumo"
+compatibility_date = "2026-11-08"
+pages_build_output_dir = "./cloudflare-dist"
+# APP_ORIGIN, SUPABASE_URL e SUPABASE_PUBLISHABLE_KEY são configurados no painel.
+# Não colocar credenciais, chaves de IA ou dados bancários neste arquivo.

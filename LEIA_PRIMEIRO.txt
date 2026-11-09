@@ -14,3 +14,6 @@ PAGAMENTOS
 A tela de compra foi retirada, e novos pedidos são bloqueados no servidor. Os dados privados anteriores não foram apagados; esta mudança não transfere nem devolve dinheiro.
 
 A prévia sem senha usa conta fictícia e é um arquivo separado. O app deste ZIP mantém login real.
+
+CLOUDFLARE
+Esta versão também inclui a adaptação para Cloudflare Pages. Veja CLOUDFLARE.md: build node scripts/build-cloudflare.cjs, saída cloudflare-dist. O login usa o mesmo projeto Supabase. Nenhuma mudança de domínio ou DNS foi realizada.

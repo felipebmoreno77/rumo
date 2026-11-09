@@ -14,6 +14,8 @@ O login usa Supabase Auth e cookies HttpOnly. Menu e funcionalidades exigem sess
 
 ## Publicação
 
+Para Cloudflare Pages, veja `CLOUDFLARE.md`. O build `node scripts/build-cloudflare.cjs` prepara o app e o login em `cloudflare-dist`. A publicação na conta Cloudflare e os testes reais ainda estão pendentes; nenhum endereço principal foi trocado.
+
 O repositório está conectado ao projeto Netlify existente. `netlify.toml` publica `public` e as funções em `netlify/functions`. Preserve as três variáveis de autenticação de `netlify.env.example`. A integração do Mentor gratuito não precisa de chaves de IA.
 
 Na última conferência, as publicações de produção da Netlify estavam pausadas por limite de créditos. O código e os pacotes atualizados não significam que essa hospedagem já recebeu a nova versão. Para trocar de plataforma, adaptar e testar as funções de autenticação antes de alterar o endereço principal. Não basta arrastar o ZIP em um serviço estático.
@@ -21,7 +23,9 @@ Na última conferência, as publicações de produção da Netlify estavam pausa
 ## Estrutura
 
 - `public/index.html`: app completo com login e Mentor gratuito.
-- `netlify/functions/auth.cjs`: autenticação no servidor.
+- `netlify/functions/auth.cjs`: núcleo compartilhado de autenticação, com entrada Netlify e configuração por requisição.
+- `cloudflare/worker.mjs` e `scripts/build-cloudflare.cjs`: adaptação para Cloudflare Pages sem dependências Node no runtime.
+- `CLOUDFLARE.md`: campos e etapas para publicar e validar a nova hospedagem.
 - `netlify/functions/mentor.cjs`: encerra o endpoint antigo de geração com HTTP 410.
 - `netlify/functions/credits.cjs`: bloqueia novas compras; mantém operações legadas restritas.
 - `netlify/lib/credit-session.cjs` e `supabase/`: suporte legado; não necessários à conversa gratuita.
@@ -35,7 +39,7 @@ Na última conferência, as publicações de produção da Netlify estavam pausa
 Use Node 22. Os testes DOM precisam de jsdom@26.1.0 em auth-test-deps ao lado da pasta do projeto.
 
 ```sh
-node --test tests/security.cjs tests/mentor.cjs tests/credits.cjs
+node --test tests/security.cjs tests/mentor.cjs tests/credits.cjs tests/cloudflare.cjs
 node tests/gate.cjs
 node tests/mentor-ui.cjs
 node tests/settings-account.cjs
