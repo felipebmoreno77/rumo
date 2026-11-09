@@ -37,6 +37,17 @@ async function handleAuth(event,env){
   if(b.action==='session'){
    const s=await session();return s?reply(200,{user:userInfo(s.user)},s.cookies):reply(401,{error:'Entre na sua conta para continuar.'},clear());
   }
+  if(b.action==='portal'){
+   const operations=['access','event','review','ticket','dashboard','ticket_status'];
+   if(!operations.includes(b.operation)||!b.data||typeof b.data!=='object'||Array.isArray(b.data))return reply(400,{error:'Solicitação inválida.'});
+   const s=await session();if(!s)return reply(401,{error:'Entre na sua conta para continuar.'},clear());
+   const owner=s.user.id==='4793e6e8-40b6-4bb1-be3d-eb0366433ac2'&&s.user.email?.toLowerCase()==='felipebmoreno@icloud.com';
+   if(['dashboard','ticket_status'].includes(b.operation)&&!owner)return reply(403,{error:'Acesso exclusivo à administração.'},s.cookies);
+   const res=await fetch(base.replace(/\/$/,'')+'/rest/v1/rpc/rumo_portal',{method:'POST',headers:{apikey:key,Authorization:'Bearer '+s.token,'Content-Type':'application/json'},body:JSON.stringify({p_action:b.operation,p_data:b.data}),signal:AbortSignal.timeout(10000)});
+   const data=await res.json().catch(()=>null);
+   if(!res.ok){const forbidden=res.status===403||data?.code==='42501';const limited=data?.code==='P0001';return reply(forbidden?403:limited?429:res.status>=500?503:400,{error:forbidden?'Acesso exclusivo à administração.':limited?'Limite de pedidos atingido. Aguarde uma hora ou fale pelo WhatsApp.':'Não foi possível concluir. Tente novamente.'},s.cookies)}
+   return reply(200,data,s.cookies);
+  }
   if(b.action==='logout'){
    const s=await session();if(s)await api('logout?scope=local',{},s.token);
    return reply(200,{ok:true},clear());
