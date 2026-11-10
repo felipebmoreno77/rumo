@@ -1338,11 +1338,47 @@ body:has(#rp-navigation:not([hidden])){overflow:hidden}
 #rumo-app-preview #ra-status{font-size:14px}
 @media(max-width:500px){#rumo-app-preview .ra-card{padding:24px 20px}}
 </style>
+
+<style id="rumo-mobile-layout">
+/* O respiro fica dentro do aplicativo, sem criar uma moldura na página. */
+html,body{margin:0;padding:0;background:#0b0d14}
+html:has(#rumo-app-preview[data-theme="light"]),body:has(#rumo-app-preview[data-theme="light"]){background:#f6f7f2}
+#rumo-app-preview,#rumo-app-preview[data-theme="light"]{width:100%;max-width:100%;border:0;border-radius:0}
+@media(max-width:600px){
+ #rumo-app-preview{--mobile-gutter:24px}
+ #rumo-app-preview .rp-main,
+ #rumo-app-preview[data-theme] .rp-main,
+ #rumo-app-preview[data-screen="home"] .rp-main,
+ #rumo-app-preview[data-theme][data-screen="home"] .rp-main{
+  padding-left:max(var(--mobile-gutter),env(safe-area-inset-left));
+  padding-right:max(var(--mobile-gutter),env(safe-area-inset-right));
+ }
+ #rumo-app-preview .rp-header,#rumo-app-preview[data-theme] .rp-header,#rumo-app-preview .lp-banner{
+  padding-left:max(var(--mobile-gutter),env(safe-area-inset-left));
+  padding-right:max(var(--mobile-gutter),env(safe-area-inset-right));
+ }
+ #rumo-app-preview .rp-main,#rumo-app-preview .rp-stage,#rumo-app-preview .rp-layout>*,
+ #rumo-app-preview .lp-grid>*,#rumo-app-preview .ma-layout>*,#rumo-app-preview .ad-grid>*,
+ #rumo-app-preview .su-grid>*,#rumo-app-preview .ry-heading>*{min-width:0;max-width:100%}
+ #rumo-app-preview .rp-main{overflow-wrap:anywhere}
+ #rumo-app-preview .home-hero h1,#rumo-app-preview[data-theme] .home-hero h1{
+  font-size:clamp(32px,9.3vw,40px);letter-spacing:-1.5px;line-height:1.1;
+ }
+ #rumo-app-preview .hero-kicker,#rumo-app-preview[data-theme] .hero-kicker{flex-wrap:wrap;row-gap:8px}
+ #rumo-app-preview .rp-button,#rumo-app-preview .rumo-btn{max-width:100%;white-space:normal;overflow-wrap:anywhere}
+ #rumo-app-preview .rp-actions,#rumo-app-preview .lp-nav,#rumo-app-preview .ts-account-head{flex-wrap:wrap}
+ #rumo-app-preview .rp-main input,#rumo-app-preview .rp-main select,#rumo-app-preview .rp-main textarea{min-width:0;max-width:100%}
+ #rumo-app-preview .lp-account{min-width:0;overflow-wrap:anywhere}
+ #rumo-app-preview .rp-menu.rp-side-drawer{max-width:calc(100% - 24px)}
+}
+@media(max-width:359px){#rumo-app-preview{--mobile-gutter:20px}}
+@media(max-width:380px){#rumo-app-preview .rp-home-status{display:none}}
+</style>
 <header class="rp-header"><div class="rp-brand-wrap"><button class="rp-menu-btn" data-act="menu" aria-label="Abrir menu" aria-expanded="false" aria-controls="rp-navigation">☰</button><button class="rp-logo-button" data-act="home" aria-label="Rumo, página inicial"><span class="rp-logo">rumo<span>.</span></span></button></div><span class="rp-home-status">Seu próximo passo, no seu ritmo</span></header>
 <button class="rp-menu-shade" data-act="close-menu" aria-label="Fechar menu lateral" hidden></button>
 <aside id="rp-navigation" class="rp-menu rp-side-drawer" role="dialog" aria-modal="true" aria-labelledby="rp-drawer-title" hidden><div class="rp-drawer-inner"><div class="rp-drawer-head"><span id="rp-drawer-title">Menu</span><button class="rp-drawer-close" data-act="close-menu" aria-label="Fechar menu lateral">×</button></div><nav class="rp-drawer-links" aria-label="Navegação principal"><button class="rp-drawer-item" data-act="how" ><span class="rp-drawer-icon" aria-hidden="true"><i data-lucide="circle-help"></i><span class="rp-icon-fallback">?</span></span><span class="rp-drawer-copy"><strong>Como funciona</strong><small>Conheça os passos da exploração</small></span></button><button class="rp-drawer-item" data-act="home" ><span class="rp-drawer-icon" aria-hidden="true"><i data-lucide="house"></i><span class="rp-icon-fallback">⌂</span></span><span class="rp-drawer-copy"><strong>Explorar</strong><small>Seu passo de hoje e próximos caminhos</small></span></button><button class="rp-drawer-item" data-act="results" id="rp-nav-result" disabled><span class="rp-drawer-icon" aria-hidden="true"><i data-lucide="map"></i><span class="rp-icon-fallback">⌘</span></span><span class="rp-drawer-copy"><strong>Meu mapa</strong><small>Seus caminhos e interesses</small></span></button><button class="rp-drawer-item" data-expanded="catalogue"><span class="rp-drawer-icon" aria-hidden="true"><i data-lucide="compass"></i><span class="rp-icon-fallback">↗</span></span><span class="rp-drawer-copy"><strong>Conhecer os caminhos</strong><small>Explore os nove grupos de áreas</small></span></button>
 <button class="rp-drawer-item" data-act="routines" ><span class="rp-drawer-icon" aria-hidden="true"><i data-lucide="route"></i><span class="rp-icon-fallback">↗</span></span><span class="rp-drawer-copy"><strong>Rotinas e planos</strong><small>Experimente um caminho na prática</small></span></button><button class="rp-drawer-item" data-y-nav="creations"><span class="rp-drawer-icon" aria-hidden="true"><i data-lucide="folder-heart"></i><span class="rp-icon-fallback">▱</span></span><span class="rp-drawer-copy"><strong>Minhas criações</strong><small>Projetos, rascunhos e descobertas</small></span></button>
-<button class="rp-drawer-item" data-act="passport" ><span class="rp-drawer-icon" aria-hidden="true"><i data-lucide="flag"></i><span class="rp-icon-fallback">⚑</span></span><span class="rp-drawer-copy"><strong>Passaporte</strong><small>Registros e descobertas da jornada</small></span></button><button class="rp-drawer-item" data-mentor-open="true"><span class="rp-drawer-icon"><i data-lucide="sparkles" aria-hidden="true"></i></span><span class="rp-drawer-copy"><strong>Mentor Rumo</strong><small>Ajuda rápida, voz e próximos passos</small></span></button><button class="rp-drawer-item" data-act="support"><span class="rp-drawer-icon"><i data-lucide="headphones" aria-hidden="true"></i></span><span class="rp-drawer-copy"><strong>Suporte</strong><small>Tire suas dúvidas com a gente</small></span></button><details class="rp-drawer-more" name="rumo-extra-navigation"><summary>Seu próximo capítulo <span aria-hidden="true">⌄</span></summary><div class="rp-drawer-secondary">
+<button class="rp-drawer-item" data-act="passport" ><span class="rp-drawer-icon" aria-hidden="true"><i data-lucide="flag"></i><span class="rp-icon-fallback">⚑</span></span><span class="rp-drawer-copy"><strong>Passaporte</strong><small>Registros e descobertas da jornada</small></span></button><button class="rp-drawer-item" data-mentor-open="true"><span class="rp-drawer-icon"><i data-lucide="sparkles" aria-hidden="true"></i></span><span class="rp-drawer-copy"><strong>Mentor Rumo</strong><small>Ajuda rápida, voz e próximos passos</small></span></button><a class="rp-drawer-item" href="/?comprar=1" data-access-nav style="text-decoration:none"><span class="rp-drawer-icon"><i data-lucide="badge-check" aria-hidden="true"></i></span><span class="rp-drawer-copy"><strong>Meu acesso</strong><small>Teste de 24 horas e acesso vitalício</small></span></a><button class="rp-drawer-item" data-act="support"><span class="rp-drawer-icon"><i data-lucide="headphones" aria-hidden="true"></i></span><span class="rp-drawer-copy"><strong>Suporte</strong><small>Tire suas dúvidas com a gente</small></span></button><details class="rp-drawer-more" name="rumo-extra-navigation"><summary>Seu próximo capítulo <span aria-hidden="true">⌄</span></summary><div class="rp-drawer-secondary">
 <button class="rp-drawer-item" data-y-nav="projects"><span class="rp-drawer-icon" aria-hidden="true"><i data-lucide="sparkles"></i><span class="rp-icon-fallback">✧</span></span><span class="rp-drawer-copy"><strong>Projetos por interesse</strong><small>Crie a partir do que você curte</small></span></button>
 <button class="rp-drawer-item" data-act="duo"><span class="rp-drawer-icon" aria-hidden="true"><i data-lucide="users-round"></i><span class="rp-icon-fallback">⊕</span></span><span class="rp-drawer-copy"><strong>Missão em dupla</strong><small>Dois papéis, um projeto em comum</small></span></button>
 <button class="rp-drawer-item" data-y-nav="compare"><span class="rp-drawer-icon" aria-hidden="true"><i data-lucide="git-compare-arrows"></i><span class="rp-icon-fallback">⇄</span></span><span class="rp-drawer-copy"><strong>Comparar dois caminhos</strong><small>Duas experiências, novas pistas</small></span></button>
