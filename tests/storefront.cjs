@@ -9,7 +9,7 @@ async function boot(signed,state='ready'){
   if(b.operation==='start')current='trial';
   if(b.operation==='create')order={id:'12345678-aaaa-1234-1234-123456789000',amountCents:1990,status:'pending'};
   if(b.operation==='report')order.status='reported';
-  return {ok:true,json:async()=>({allowed:current==='trial'||current==='lifetime',state:current,serverNow:new Date().toISOString(),trialExpiresAt:new Date(Date.now()+86400000).toISOString(),amountCents:1990,recipient:'Felipe Barbanera Moreno',order,pix:order?{payload:'PIX-EXEMPLO',recipient:'Felipe Barbanera Moreno',reference:'RUMO12345678'}:null})};
+  return {ok:true,json:async()=>({allowed:['trial','lifetime','admin'].includes(current),admin:current==='admin',state:current,serverNow:new Date().toISOString(),trialExpiresAt:new Date(Date.now()+86400000).toISOString(),amountCents:1990,recipient:'Felipe Barbanera Moreno',order,pix:order?{payload:'PIX-EXEMPLO',recipient:'Felipe Barbanera Moreno',reference:'RUMO12345678'}:null})};
  };}});await pause();return {dom,d:dom.window.document,calls};
 }
 (async()=>{
@@ -18,5 +18,6 @@ async function boot(signed,state='ready'){
  d.querySelector('[data-license-action=enter]').click();await pause();assert(calls.some(x=>x.operation==='start'));assert.equal(dom.window.nextApp,'/app');dom.window.close();
  ({dom,d,calls}=await boot(true,'expired'));assert(!d.querySelector('[data-license-action=enter]'));d.querySelector('[data-license-action=create]').click();await pause();assert(d.querySelector('#lp-copy'));d.querySelector('[data-license-action=report]').click();await pause();assert.match(d.querySelector('.lp-page').textContent,/Seu Pix está em conferência/);assert(!d.querySelector('[data-license-action=enter]'));assert(!calls.some(x=>x.operation==='approve'));dom.window.close();
  ({dom,d,calls}=await boot(true,'lifetime'));assert(d.querySelector('[data-license-action=enter]'));assert(!d.querySelector('[data-license-action=create]'));dom.window.close();
+ ({dom,d,calls}=await boot(true,'admin'));assert.match(d.querySelector('.lp-page').textContent,/isenta de pagamento/);assert.match(d.querySelector('.lp-page').textContent,/não precisa fazer o Pix/);assert(d.querySelector('[data-license-action=enter]'));assert(!d.querySelector('[data-license-action=create]'));assert(!d.querySelector('[data-license-action=report]'));assert(!calls.some(x=>['start','create','report'].includes(x.operation)));d.querySelector('[data-act=menu]').click();assert(d.querySelector('[data-act=checkout]'));dom.window.close();
  console.log('Compra: login, teste explícito, preço, bloqueio após expiração, Pix informado sem liberação e acesso vitalício OK.');
 })();

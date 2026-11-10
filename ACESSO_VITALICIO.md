@@ -14,7 +14,7 @@ Não há cartão, assinatura nem cobrança automática. O Pix é manual; não h�
 
 ## Como administrar
 
-Entre com `felipebmoreno@icloud.com`, abra o app e vá a **Menu → Painel administrativo → Compras**. O administrador não precisa iniciar teste nem comprar o próprio app.
+Entre com `felipebmoreno@icloud.com`, abra o app e vá a **Menu → Painel administrativo → Compras**. O administrador não precisa iniciar teste nem comprar o próprio app. A opção **Menu → Meu acesso** fica visível também para essa conta e explica a isenção, além de mostrar a oferta destinada aos clientes.
 
 - Filtre por **Para conferir** para ver pedidos informados como pagos.
 - Compare no seu banco o valor, o pedido e o recebimento.
