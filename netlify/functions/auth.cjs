@@ -2,9 +2,11 @@
 const cookie=(name,value,age)=>name+'='+encodeURIComponent(value)+'; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age='+age;
 const clear=()=>[cookie('__Host-rumo-access','',0),cookie('__Host-rumo-refresh','',0)];
 function pixPayload(pix,amountCents){
- const tlv=(id,value)=>id+String(value.length).padStart(2,'0')+value;
- const name=String(pix.recipient).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9 ]/g,'').toUpperCase().slice(0,25);
- let body='000201'+tlv('26',tlv('00','br.gov.bcb.pix')+tlv('01',pix.key))+'520400005303986'+tlv('54',(amountCents/100).toFixed(2))+'5802BR'+tlv('59',name)+tlv('60','BRASIL')+tlv('62',tlv('05',pix.reference))+'6304';
+ const tlv=(id,value)=>{if(typeof value!=='string'||!value.length||value.length>99||!/^[\x20-\x7e]+$/.test(value))throw new Error('Campo Pix inválido.');return id+String(value.length).padStart(2,'0')+value;};
+ const clean=(value,max)=>String(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9 ]/g,'').replace(/\s+/g,' ').trim().toUpperCase().slice(0,max);
+ const name=clean(pix.recipient,25),city=clean(pix.city||'ATIBAIA',15),reference=pix.reference||'***';
+ if(!Number.isSafeInteger(amountCents)||amountCents<=0||typeof pix.key!=='string'||pix.key.length>77||!(reference==='***'||/^[A-Za-z0-9]{1,25}$/.test(reference)))throw new Error('Dados Pix inválidos.');
+ let body='000201010211'+tlv('26',tlv('00','br.gov.bcb.pix')+tlv('01',pix.key))+'520400005303986'+tlv('54',(amountCents/100).toFixed(2))+'5802BR'+tlv('59',name)+tlv('60',city)+tlv('62',tlv('05',reference))+'6304';
  let crc=0xffff;for(let i=0;i<body.length;i++){crc^=body.charCodeAt(i)<<8;for(let j=0;j<8;j++)crc=((crc<<1)^((crc&0x8000)?0x1021:0))&0xffff;}
  return body+crc.toString(16).toUpperCase().padStart(4,'0');
 }
@@ -52,7 +54,12 @@ async function handleAuth(event,env){
    const res=await fetch(base.replace(/\/$/,'')+'/rest/v1/rpc/rumo_license',{method:'POST',headers:{apikey:key,Authorization:'Bearer '+s.token,'Content-Type':'application/json'},body:JSON.stringify({p_action:b.operation,p_data:b.data}),signal:AbortSignal.timeout(10000)});
    const data=await res.json().catch(()=>null);
    if(!res.ok){const denied=res.status===403||data?.code==='42501';return reply(denied?403:res.status>=500?503:400,{error:denied?'Acesso não autorizado. Entre novamente.':data?.code==='P0001'&&typeof data.message==='string'?data.message:'Não foi possível concluir. Confira os dados e tente novamente.'},s.cookies);}
-   if(data?.pix&&data.order?.amountCents){data.pix.payload=pixPayload(data.pix,data.order.amountCents);}
+   if(data?.pix&&data.order?.amountCents){
+    // Perfil do QR estático gerado pelo Inter e fornecido pelo recebedor.
+    // A referência RUMO identifica o pedido no app; não é enviada ao banco.
+    data.pix.payload=pixPayload({...data.pix,recipient:'FELIPE B MORENO',city:'ATIBAIA',reference:'***'},data.order.amountCents);
+    data.pix.payloadReference='***';
+   }
    return reply(200,data,s.cookies);
   }
   if(b.action==='portal'){

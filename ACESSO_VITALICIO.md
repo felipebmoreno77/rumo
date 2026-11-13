@@ -7,10 +7,10 @@
 3. O teste começa no primeiro comando de entrar no app. O Supabase registra o início e o fim; são 24 horas corridas. Login, logout, reinstalação, troca de domínio/aparelho e “Recomeçar jornada” não renovam o prazo.
 4. Depois do teste, a área do app exige a licença vitalícia. A página pública, login, compra, privacidade e suporte continuam disponíveis.
 5. A compra custa **R$ 19,90**, pagamento único por Pix. O valor é definido no servidor, não pelo navegador. Um pedido aberto é reutilizado para evitar duplicidade; cada conta pode criar no máximo cinco pedidos por dia.
-6. O cliente copia o código Pix, paga no próprio banco e toca em **Já fiz o Pix**. Esse comando apenas informa o pagamento; não concede licença.
+6. O cliente copia o código Pix ou usa **Copiar só a chave Pix**, informa R$ 19,90 quando necessário, paga no próprio banco e toca em **Já fiz o Pix**. Esse comando apenas informa o pagamento; não concede licença.
 7. A equipe confere o recebimento no banco e libera o acesso no painel. A tela do cliente verifica novamente a cada 30 segundos enquanto aguarda conferência, ou pelo botão **Verificar liberação**.
 
-Não há cartão, assinatura nem cobrança automática. O Pix é manual; não há webhook bancário ou conciliação automática. O código inclui identificação do pedido, mas o banco pode não apresentar esse campo como esperado. Se não for possível identificar o recebimento, peça ao cliente o comprovante com o protocolo pelo WhatsApp. Nunca libere apenas porque ele informou o pagamento.
+Não há cartão, assinatura nem cobrança automática. O Pix é manual; não há webhook bancário ou conciliação automática. O Copia e Cola reproduz o QR estático de R$ 19,90 gerado pelo Inter e fornecido pelo recebedor em 12/11/2026: indicação estática `01=11`, nome `FELIPE B MORENO`, cidade `ATIBAIA` e `txid=***`. O CRC deve coincidir com a referência independente `009A`. O código não inclui a referência RUMO no pagamento bancário; ela e o protocolo continuam identificando a compra dentro do app. Para vincular o recebimento, peça o comprovante com o protocolo pelo WhatsApp e compare os dados no banco. O mesmo vale para transferências feitas diretamente pela chave. A compatibilidade estrutural foi verificada; a conclusão de um pagamento real do novo Copia e Cola ainda depende de validação no banco. Nunca libere apenas porque ele informou o pagamento.
 
 ## Como administrar
 
