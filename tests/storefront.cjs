@@ -1,5 +1,6 @@
 const {JSDOM}=require('../../auth-test-deps/node_modules/jsdom'),fs=require('node:fs'),assert=require('node:assert/strict');
 const html=fs.readFileSync(__dirname+'/../public/storefront.html','utf8');
+const bankPayload='00020101021126580014br.gov.bcb.pix01360fa5908f-a977-4422-8ef4-f832ed3394ba520400005303986540519.905802BR5915FELIPE B MORENO6007ATIBAIA62070503***6304009A';
 const pause=()=>new Promise(r=>setTimeout(r,120));
 async function boot(signed,state='ready',clipboardMode='missing'){
  let current=state,order=null;const calls=[],copied=[];
@@ -9,7 +10,7 @@ async function boot(signed,state='ready',clipboardMode='missing'){
   if(b.operation==='start')current='trial';
   if(b.operation==='create')order={id:'12345678-aaaa-1234-1234-123456789000',amountCents:1990,status:'pending'};
   if(b.operation==='report')order.status='reported';
-  return {ok:true,json:async()=>({allowed:['trial','lifetime','admin'].includes(current),admin:current==='admin',state:current,serverNow:new Date().toISOString(),trialExpiresAt:new Date(Date.now()+86400000).toISOString(),amountCents:1990,recipient:'Felipe Barbanera Moreno',order,pix:order?{payload:'PIX-EXEMPLO',key:'0fa5908f-a977-4422-8ef4-f832ed3394ba',recipient:'Felipe Barbanera Moreno',reference:'RUMO12345678'}:null})};
+  return {ok:true,json:async()=>({allowed:['trial','lifetime','admin'].includes(current),admin:current==='admin',state:current,serverNow:new Date().toISOString(),trialExpiresAt:new Date(Date.now()+86400000).toISOString(),amountCents:1990,recipient:'Felipe Barbanera Moreno',order,pix:order?{payload:bankPayload,key:'0fa5908f-a977-4422-8ef4-f832ed3394ba',recipient:'Felipe Barbanera Moreno',reference:'RUMO12345678'}:null})};
  };}});await pause();return {dom,d:dom.window.document,calls,copied};
 }
 (async()=>{
@@ -22,17 +23,20 @@ async function boot(signed,state='ready',clipboardMode='missing'){
  for(const mode of ['ok','denied-exec','denied','missing']){
   const preview=await boot(true,'expired',mode),doc=preview.d;doc.querySelector('[data-license-action=create]').click();await pause();
   const key='0fa5908f-a977-4422-8ef4-f832ed3394ba';
-  assert.equal(doc.querySelector('#lp-copy').value,key);
+  assert.equal(doc.querySelector('#lp-copy').value,bankPayload);
+  assert(bankPayload.includes(key));assert(bankPayload.includes('540519.90'));
   assert.equal(doc.querySelectorAll('[data-license-action=copy]').length,1);
   assert(!doc.querySelector('[data-license-action=copy-key]'));
-  assert.match(doc.querySelector('.lp-pix').textContent,/Transferir por chave/);
+  assert.match(doc.querySelector('.lp-pix').textContent,/Pix Copia e Cola/);
+  assert(!doc.querySelector('.lp-pix').textContent.includes('informe'));
+  assert.match(doc.querySelector('.lp-pix').textContent,/já está preenchido/);
   assert.match(doc.querySelector('.lp-pix').textContent,/O Pix não leva o número do pedido/);
   doc.querySelector('[data-license-action=copy]').click();await pause();
   const toast=doc.querySelector('#lp-copy-toast');assert(toast);assert.equal(toast.getAttribute('role'),'status');
   if(mode==='ok'||mode==='denied-exec'){
-   assert.equal(preview.copied.at(-1),key);assert.equal(toast.dataset.kind,'success');assert.match(toast.textContent,/Chave copiada com sucesso/);
+   assert.equal(preview.copied.at(-1),bankPayload);assert.equal(toast.dataset.kind,'success');assert.match(toast.textContent,/Código Pix copiado com sucesso/);
   }else{
-   assert.equal(preview.copied.length,0);assert.equal(doc.activeElement.id,'lp-copy');assert.equal(doc.activeElement.selectionEnd,36);assert.equal(toast.dataset.kind,'manual');assert(!toast.textContent.includes('sucesso'));
+   assert.equal(preview.copied.length,0);assert.equal(doc.activeElement.id,'lp-copy');assert.equal(doc.activeElement.selectionEnd,bankPayload.length);assert.equal(toast.dataset.kind,'manual');assert(!toast.textContent.includes('sucesso'));
   }
   assert.match(doc.querySelector('#lp-status').textContent,/19,90/);
   assert(!preview.calls.some(x=>['report','approve'].includes(x.operation)));
