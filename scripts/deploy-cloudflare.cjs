@@ -9,7 +9,7 @@ function prepare(){
  const bytes=fs.readFileSync(path.join(dir,'index.html'));
  const hash=crypto.createHash('sha256').update(bytes).digest('hex').slice(0,32);
  const assets={[hash]:{bytes,type:'text/html; charset=utf-8'}},manifest={'/index.html':{hash,size:bytes.length}};
- for(const [name,type] of [['favicon.svg','image/svg+xml'],['favicon.ico','image/x-icon'],['favicon-32x32.png','image/png'],['apple-touch-icon.png','image/png']]){
+ for(const [name,type] of [['favicon.svg','image/svg+xml'],['favicon.ico','image/x-icon'],['favicon-32x32.png','image/png'],['apple-touch-icon.png','image/png'],['assets/rumo-workspace.jpg','image/jpeg']]){
   const file=fs.readFileSync(path.join(dir,name)),digest=crypto.createHash('sha256').update(file).digest('hex').slice(0,32);
   manifest['/'+name]={hash:digest,size:file.length};assets[digest]={bytes:file,type};
  }

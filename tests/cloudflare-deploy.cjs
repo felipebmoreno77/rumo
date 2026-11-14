@@ -1,7 +1,7 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const {deploy,prepare}=require('../scripts/deploy-cloudflare.cjs');
-test('publicação inclui apenas HTML e ícones permitidos, preservando a autenticação',async()=>{
+test('publicação inclui apenas HTML, ícones e a foto permitida, preservando a autenticação',async()=>{
  const prepared=prepare(),calls=[];
  const fetcher=async(url,options)=>{
   calls.push({url,options});
@@ -11,7 +11,7 @@ test('publicação inclui apenas HTML e ícones permitidos, preservando a autent
  };
  const result=await deploy({token:'test-only-not-a-credential',fetcher,prepared});
  assert.equal(result.deployment,'test-deployment');assert.equal(calls.length,3);
- assert.deepEqual(Object.keys(JSON.parse(calls[0].options.body).manifest),['/index.html','/favicon.svg','/favicon.ico','/favicon-32x32.png','/apple-touch-icon.png']);
+ assert.deepEqual(Object.keys(JSON.parse(calls[0].options.body).manifest),['/index.html','/favicon.svg','/favicon.ico','/favicon-32x32.png','/apple-touch-icon.png','/assets/rumo-workspace.jpg']);
  assert.equal(calls[1].options.headers.Authorization,'Bearer upload-example');
  for(const [hash,asset] of Object.entries(prepared.assets)){const blob=calls[1].options.body.get(hash);assert.deepEqual(Buffer.from(await blob.text(),'base64'),asset.bytes);assert.equal(blob.type,asset.type);}
  const meta=JSON.parse(await calls[2].options.body.get('metadata').text());
