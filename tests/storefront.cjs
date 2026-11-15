@@ -3,23 +3,29 @@ const html=fs.readFileSync(__dirname+'/../public/storefront.html','utf8');
 const bankPayload='00020101021126580014br.gov.bcb.pix01360fa5908f-a977-4422-8ef4-f832ed3394ba520400005303986540519.905802BR5915FELIPE B MORENO6007ATIBAIA62070503***6304009A';
 const pause=()=>new Promise(r=>setTimeout(r,120));
 async function boot(signed,state='ready',clipboardMode='missing',config={}){
- let current=state,order=null;const calls=[],copied=[];
+ let current=state,order=null;const calls=[],copied=[],intervals=[];
  const source=html.replace("location.assign(nextUrl)","window.nextApp=nextUrl");
- const dom=new JSDOM(source,{url:config.url||'https://rumo.example/?comprar=1',runScripts:'dangerously',beforeParse(w){w.scrollTo=()=>{};if(config.fastTimeout){const schedule=w.setTimeout.bind(w);w.setTimeout=(fn,ms,...args)=>schedule(fn,ms===20000?25:ms,...args);}if(clipboardMode!=='missing')Object.defineProperty(w.navigator,'clipboard',{value:{writeText:async value=>{if(clipboardMode.startsWith('denied'))throw new Error('Permissão negada');copied.push(value);}}});w.document.execCommand=command=>{if(command==='copy'&&clipboardMode==='denied-exec'){copied.push(w.document.activeElement.value);return true;}return false;};w.crypto.randomUUID=()=>config.randomUUID?config.randomUUID():'12345678-aaaa-1234-1234-123456789000';w.fetch=async(url,opts)=>{
+ const dom=new JSDOM(source,{url:config.url||'https://rumo.example/?comprar=1',runScripts:'dangerously',pretendToBeVisual:true,beforeParse(w){w.scrollTo=()=>{};if(config.captureInterval)w.setInterval=(fn,ms)=>{intervals.push({fn,ms});return intervals.length;};if(config.fastTimeout){const schedule=w.setTimeout.bind(w);w.setTimeout=(fn,ms,...args)=>schedule(fn,ms===20000?25:ms,...args);}if(clipboardMode!=='missing')Object.defineProperty(w.navigator,'clipboard',{value:{writeText:async value=>{if(clipboardMode.startsWith('denied'))throw new Error('Permissão negada');copied.push(value);}}});w.document.execCommand=command=>{if(command==='copy'&&clipboardMode==='denied-exec'){copied.push(w.document.activeElement.value);return true;}return false;};w.crypto.randomUUID=()=>config.randomUUID?config.randomUUID():'12345678-aaaa-1234-1234-123456789000';w.fetch=async(url,opts)=>{
   const b=JSON.parse(opts.body);calls.push(b);if(b.action==='session')return {ok:signed,status:signed?200:401,json:async()=>signed?{user:{id:'buyer',email:'buyer@example.com'}}:{error:'Entre'}};
   if(b.operation==='status'&&config.rejectStatus)return {ok:false,status:503,json:async()=>({error:'Falha de conexão'})};
   if(b.operation==='create'&&config.create){const custom=await config.create(w,opts,b);if(custom)return custom;}
   if(b.operation==='start')current='trial';
   if(b.operation==='create')order={id:'12345678-aaaa-1234-1234-123456789000',amountCents:1990,status:'pending'};
-  if(b.operation==='report')order.status='reported';
+  if(b.operation==='status'&&config.overrideState){current=config.overrideState;if(current==='lifetime'&&order)order.status='approved';}
   return {ok:true,json:async()=>({allowed:['trial','lifetime','admin'].includes(current),admin:current==='admin',state:current,serverNow:new Date().toISOString(),trialExpiresAt:new Date(Date.now()+86400000).toISOString(),amountCents:1990,recipient:'Felipe Barbanera Moreno',order,pix:order?{payload:bankPayload,key:'0fa5908f-a977-4422-8ef4-f832ed3394ba',recipient:'Felipe Barbanera Moreno',reference:'RUMO12345678'}:null})};
- };}});await pause();return {dom,d:dom.window.document,calls,copied};
+ };}});await pause();return {dom,d:dom.window.document,calls,copied,intervals};
 }
 (async()=>{
  let {dom,d,calls}=await boot(false);assert(d.querySelector('#ra-form'));d.querySelector('[data-auth-mode=signup]').click();assert(d.querySelector('[name=passwordConfirm]'));assert.equal(d.querySelector('[name=password]').minLength,10);dom.window.close();
  ({dom,d,calls}=await boot(true));assert(!calls.some(x=>x.operation==='start'));assert.match(d.querySelector('.lp-page').textContent,/19,90/);
  d.querySelector('[data-license-action=enter]').click();await pause();assert(calls.some(x=>x.operation==='start'));assert.equal(dom.window.nextApp,'/app');dom.window.close();
- ({dom,d,calls}=await boot(true,'expired'));assert(!d.querySelector('[data-license-action=enter]'));d.querySelector('[data-license-action=create]').click();await pause();assert(d.querySelector('#lp-copy'));d.querySelector('[data-license-action=report]').click();await pause();assert.match(d.querySelector('.lp-page').textContent,/Seu Pix está em conferência/);assert(!d.querySelector('[data-license-action=enter]'));assert(!calls.some(x=>x.operation==='approve'));dom.window.close();
+ ({dom,d,calls}=await boot(true,'expired'));assert(!d.querySelector('[data-license-action=enter]'));d.querySelector('[data-license-action=create]').click();await pause();assert(d.querySelector('#lp-copy'));assert(!d.querySelector('[data-license-action=report]'));assert(!d.querySelector('.lp-page').textContent.includes('Já fiz o Pix'));assert.match(d.querySelector('.lp-page').textContent,/Seu pedido já aparece para a administração/);
+ const beforeCheck=calls.length;d.querySelector('[data-license-action=refresh]').click();await pause();assert(calls.slice(beforeCheck).every(c=>c.action==='license'&&c.operation==='status'));assert.match(d.querySelector('#lp-status').textContent,/liberação ainda está pendente/);assert(!d.querySelector('[data-license-action=enter]'));assert(!calls.some(x=>['report','approve'].includes(x.operation)));dom.window.close();
+ // A consulta automática atende pedidos recém-gerados sem depender de autodeclaração.
+ const pollingConfig={captureInterval:true},polling=await boot(true,'expired','missing',pollingConfig);
+ polling.d.querySelector('[data-license-action=create]').click();await pause();const releaseTimer=polling.intervals.find(t=>t.ms===30000);assert(releaseTimer);
+ const checks=polling.calls.filter(c=>c.operation==='status').length;await releaseTimer.fn();await pause();assert.equal(polling.calls.filter(c=>c.operation==='status').length,checks+1);assert(!polling.d.querySelector('[data-license-action=enter]'));
+ pollingConfig.overrideState='lifetime';await releaseTimer.fn();await pause();assert(polling.d.querySelector('[data-license-action=enter]'));assert.match(polling.d.querySelector('.lp-page').textContent,/Seu acesso está liberado/);assert(!polling.calls.some(c=>['report','approve'].includes(c.operation)));polling.dom.window.close();
  // Entrar pela página inicial após o teste não pode deixar a compra travada.
  ({dom,d,calls}=await boot(true,'expired','missing',{url:'https://rumo.example/'}));
  d.querySelector('.home-hero [data-act=start]').click();await pause();
@@ -64,5 +70,5 @@ async function boot(signed,state='ready',clipboardMode='missing',config={}){
   assert(!preview.calls.some(x=>['report','approve'].includes(x.operation)));
   toast.querySelector('button').click();assert(!doc.querySelector('#lp-copy-toast'));preview.dom.window.close();
  }
- console.log('Compra: login, teste explícito, preço, bloqueio após expiração, Pix informado sem liberação e acesso vitalício OK.');
+ console.log('Compra: login, teste explícito, preço, bloqueio após expiração, consulta de liberação sem autodeclaração e acesso vitalício OK.');
 })();
