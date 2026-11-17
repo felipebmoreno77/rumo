@@ -372,3 +372,51 @@
  #rumo-app-preview .r3-phone-front{right:0}
 }
 @media(prefers-reduced-motion:reduce){#rumo-app-preview *,#rumo-app-preview *:before,#rumo-app-preview *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Hero: ideas becoming tangible. No device mockups or directional arrow. */
+#rumo-app-preview .r5-possibilities{position:relative;width:100%;max-width:540px;aspect-ratio:1.03;margin:auto;container-type:inline-size;isolation:isolate}
+#rumo-app-preview .r5-scene{position:absolute;inset:0;overflow:visible}
+#rumo-app-preview .r5-scene-glow{position:absolute;inset:8% -3% 3%;border-radius:50%;background:radial-gradient(ellipse at 55% 60%,#9bbd5130,transparent 65%);filter:blur(16px)}
+#rumo-app-preview .r5-sphere{position:absolute;top:10%;left:7%;width:17%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 30% 22%,#f1ffba 0%,#c5ef72 25%,#8cb744 55%,#405c22 89%);box-shadow:inset -8px -8px 16px #1c3e2925,5px 18px 24px #0004;z-index:3}
+#rumo-app-preview .r5-small-star{position:absolute;top:10%;right:25%;width:30px;height:30px;color:var(--mint);transform:rotate(16deg)}
+#rumo-app-preview .r5-small-star svg{width:100%;height:100%;stroke-width:1.25}
+#rumo-app-preview .r5-platform{position:absolute;left:9%;bottom:12%;width:77%;height:13%;border-radius:18px;background:linear-gradient(170deg,#3d5441,#1b2b20 55%,#111c16);border:1px solid #4d675130;box-shadow:8px 18px 35px #0005;transform:skewY(-6deg);z-index:1}
+#rumo-app-preview .r5-platform:before{content:'';position:absolute;left:0;right:0;top:-14px;height:28px;border-radius:18px;background:linear-gradient(110deg,#6b8055,#364b35);transform:skewX(-12deg)}
+#rumo-app-preview .r5-notebook{position:absolute;left:15%;top:24%;width:52%;height:57%;padding:8% 6% 5% 8%;border:1px solid #e8f4c9;border-radius:8px 14px 14px 8px;background:linear-gradient(115deg,#eff5df,#d4e3b9);color:#243b24;transform:rotate(-11deg);box-shadow:5px 7px 0 #adc58a,8px 12px 0 #657b4b,18px 25px 35px #0005;z-index:4}
+#rumo-app-preview .r5-binding{position:absolute;left:-5%;top:9%;bottom:8%;width:11%;display:flex;flex-direction:column;justify-content:space-between}
+#rumo-app-preview .r5-binding b{height:7%;width:88%;border:3px solid #7c9162;border-left-color:#c0d2a3;border-right-color:#435b3b;border-radius:50%;box-shadow:1px 2px 2px #0002}
+#rumo-app-preview .r5-book-label{display:block;font-size:clamp(7px,1.75cqw,10px);letter-spacing:1.15px;line-height:1.5;font-weight:650;color:#5c7450;white-space:nowrap}
+#rumo-app-preview .r5-notebook>strong{display:block;margin-top:11%;font-size:clamp(26px,8cqw,45px);line-height:1.04;letter-spacing:-1.8px;font-weight:650;color:#263d26}
+#rumo-app-preview .r5-notebook>strong em{font-style:normal;color:#638328}
+#rumo-app-preview .r5-book-rule{display:block;width:91%;height:1px;background:#7c97654d;margin-top:12%}
+#rumo-app-preview .r5-book-rule-short{width:64%;margin-top:6%}
+#rumo-app-preview .r5-book-footer{position:absolute;left:15%;right:10%;bottom:7%;display:flex;align-items:center;gap:7px;font-size:clamp(7px,1.9cqw,10px);line-height:1.4;color:#49623e;font-weight:500}
+#rumo-app-preview .r5-book-footer svg{width:20px;height:20px;flex-shrink:0;stroke-width:1.4}
+#rumo-app-preview .r5-book-corner{position:absolute;top:0;right:0;width:14%;aspect-ratio:1;background:linear-gradient(225deg,#a9c27c 48%,#f5f8eb 50%);border-radius:0 12px 0 4px;box-shadow:-2px 3px 5px #354b2520}
+#rumo-app-preview .r5-plant{position:absolute;top:12%;right:5%;width:30%;height:68%;z-index:2}
+#rumo-app-preview .r5-stem{position:absolute;left:50%;top:14%;bottom:20%;width:5%;border-radius:50%;background:linear-gradient(90deg,#668b43,#b0cf79,#486f34);transform:rotate(5deg)}
+#rumo-app-preview .r5-leaf{position:absolute;box-shadow:inset -5px -5px 12px #274b2420,5px 6px 14px #0002}
+#rumo-app-preview .r5-leaf-left{left:6%;top:22%;width:47%;height:24%;border-radius:6% 90% 8% 90%;background:linear-gradient(35deg,#416d37,#95bd58 55%,#cfeb8d);transform:rotate(-11deg)}
+#rumo-app-preview .r5-leaf-right{left:51%;top:35%;width:48%;height:25%;border-radius:95% 8% 90% 8%;background:linear-gradient(140deg,#c1dd82,#729d47 55%,#385e2e);transform:rotate(8deg)}
+#rumo-app-preview .r5-leaf-top{left:44%;top:1%;width:30%;height:28%;border-radius:100% 10% 100% 10%;background:linear-gradient(110deg,#d6ed98,#82ae50 60%,#446c33);transform:rotate(-10deg)}
+#rumo-app-preview .r5-pot{position:absolute;left:19%;right:2%;bottom:0;height:27%;background:linear-gradient(100deg,#a7bd7d,#738e57 45%,#3d5e39);border-radius:10% 10% 28% 28% / 10% 10% 25% 25%;box-shadow:8px 12px 24px #0003;clip-path:polygon(0 0,100% 0,82% 100%,18% 100%)}
+#rumo-app-preview .r5-pot>span{position:absolute;top:-6%;left:0;width:100%;height:16%;border-radius:50%;background:#2b422a;border:5px solid #a8bb7d;box-shadow:0 3px 7px #233b2b33}
+#rumo-app-preview .r5-idea-note{position:absolute;right:0;top:39%;display:flex;align-items:center;gap:11px;padding:14px 17px;background:#1b2921;border:1px solid #68815766;border-radius:14px;box-shadow:5px 12px 25px #0004;transform:rotate(5deg);z-index:5}
+#rumo-app-preview .r5-idea-note>span{display:grid;place-items:center;width:33px;height:33px;border-radius:10px;background:#c1f563;color:#243b16}
+#rumo-app-preview .r5-idea-note svg{width:20px;height:20px;stroke-width:1.7}
+#rumo-app-preview .r5-idea-note small{display:block;color:#a6bb9c;font-size:8px;letter-spacing:1.2px;line-height:1.5;margin-bottom:3px}
+#rumo-app-preview .r5-idea-note strong{display:block;color:#edf5e4;font-size:13px;font-weight:550;letter-spacing:-.2px;line-height:1.5;white-space:nowrap}
+#rumo-app-preview .r5-scene-caption{position:absolute;bottom:1%;left:5%;right:5%;text-align:center;color:var(--rp-muted);font-size:9px;letter-spacing:1.9px;line-height:1.6}
+@media(max-width:760px){#rumo-app-preview .r5-possibilities{max-width:470px;margin-top:10px}}
+@media(max-width:500px){
+ #rumo-app-preview .r5-possibilities{max-width:390px;aspect-ratio:1.02;margin:8px auto 0}
+ #rumo-app-preview .r5-notebook{left:12%;width:54%;padding-top:8%}
+ #rumo-app-preview .r5-notebook>strong{font-size:clamp(26px,8.8cqw,35px);letter-spacing:-1.25px}
+ #rumo-app-preview .r5-idea-note{padding:11px 12px;gap:8px;border-radius:12px;right:0;top:38%}
+ #rumo-app-preview .r5-idea-note>span{width:27px;height:27px;border-radius:8px}
+ #rumo-app-preview .r5-idea-note strong{font-size:11px}
+ #rumo-app-preview .r5-idea-note small{font-size:7px;letter-spacing:.8px}
+ #rumo-app-preview .r5-scene-caption{font-size:8px;letter-spacing:1.4px}
+ #rumo-app-preview .r5-plant{right:3%;width:31%}
+ #rumo-app-preview .r5-small-star{width:22px;height:22px}
+}

@@ -63,7 +63,7 @@ output='<div id="rumo-design-preview-wrap">\n'+fragment+'\n<style>\n'+extra+'\n<
 assert 'fetch(' not in output and 'XMLHttpRequest' not in output and 'WebSocket' not in output
 assert len(output.encode())<1000000
 assert '\\"' not in output[:500]
-Path('/workspace/rumo-design-completo.html').write_text(output)
+Path('/workspace/rumo-ideias-preview.html').write_text(output)
 qa=Path('/workspace/scratch/dac6757147c8/mobile-preview/dist')
 qa.mkdir(parents=True,exist_ok=True)
 (qa/'rumo-full-fragment.html').write_text(output)
@@ -71,4 +71,4 @@ qa.mkdir(parents=True,exist_ok=True)
 standalone='<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Rumo · novo design</title><style>body{margin:0;background:#0c1010}</style></head><body><script>'+scripts[0].group(1)+'</script>'+output+'</body></html>'
 (qa/'rumo-full.html').write_text(standalone)
 (qa/'rumo-full-mobile.html').write_text('<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Rumo · celular</title><style>body{margin:0;background:#252c28}iframe{display:block;width:393px;max-width:100vw;height:900px;margin:auto;border:0}</style></head><body><iframe src="rumo-full.html" title="Rumo no celular"></iframe></body></html>')
-print({'bytes':len(output.encode()),'path':'/workspace/rumo-design-completo.html'})
+print({'bytes':len(output.encode()),'path':'/workspace/rumo-ideias-preview.html'})
