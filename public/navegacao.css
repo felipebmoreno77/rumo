@@ -1,0 +1,38 @@
+#rumo-app-preview#rumo-app-preview {
+  --menu-header-height: 72px;
+  padding-top: var(--menu-header-height);
+}
+#rumo-app-preview#rumo-app-preview > .rp-header {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 24;
+  display: flex;
+  width: 100%;
+  max-width: none;
+  height: var(--menu-header-height);
+  min-height: 0;
+  box-sizing: border-box;
+  align-items: center;
+}
+#rumo-app-preview#rumo-app-preview .rp-menu-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  flex: none;
+  background: var(--rp-surface, #191c19);
+  color: var(--rp-text, white);
+  border: 1px solid var(--rp-line, #454945);
+  border-radius: 8px;
+}
+#rumo-app-preview .menu-lines {
+  width: 20px;
+  height: 2px;
+  background: currentColor;
+  box-shadow: 0 -6px currentColor, 0 6px currentColor;
+}
+@media(max-width:600px){
+  #rumo-app-preview#rumo-app-preview { --menu-header-height: 64px; }
+  #rumo-app-preview .vitrine-nav a { display: none; }
+}

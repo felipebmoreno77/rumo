@@ -1,0 +1,469 @@
+#rumo-app-preview {
+  --vitrine-paper: #000000;
+  --vitrine-ink: #f4f6f4;
+  --vitrine-muted: #b3b9b5;
+  --vitrine-rule: #333936;
+  --vitrine-accent: #c6ef8c;
+  --vitrine-accent-hover: #dcffab;
+  --vitrine-display: system-ui, sans-serif;
+  --vitrine-sans: system-ui, sans-serif;
+}
+
+html:has(#rumo-app-preview[data-screen="home"], #rumo-app-preview[data-screen="auth"]) {
+  background: #000000;
+}
+
+#rumo-app-preview:is([data-screen="home"], [data-screen="auth"]) {
+  color-scheme: dark;
+  --bg: var(--vitrine-paper);
+  --panel: #141715;
+  --text: var(--vitrine-ink);
+  --muted: var(--vitrine-muted);
+  --line: var(--vitrine-rule);
+  --mint: var(--vitrine-accent);
+  background: var(--vitrine-paper);
+  color: var(--text);
+  font-family: var(--vitrine-sans);
+}
+
+#rumo-app-preview .rp-header {
+  background: var(--rp-bg, #0b0d14);
+  backdrop-filter: none;
+  box-shadow: none;
+}
+
+#rumo-app-preview:is([data-screen="home"], [data-screen="auth"]) .rp-header {
+  background: var(--vitrine-paper);
+  border-bottom: 1px solid var(--vitrine-rule);
+}
+
+#rumo-app-preview:is([data-screen="home"], [data-screen="auth"]) .rp-logo {
+  color: var(--vitrine-ink);
+  font: bold 2.25rem/1 var(--vitrine-display);
+  letter-spacing: -.055em;
+}
+
+#rumo-app-preview:is([data-screen="home"], [data-screen="auth"]) .rp-logo span {
+  color: var(--vitrine-accent);
+}
+
+#rumo-app-preview[data-screen="home"] .rp-main {
+  max-width: 1220px;
+  margin-inline: auto;
+}
+
+#rumo-app-preview[data-screen="home"] .rp-header {
+  padding-inline: max(24px, calc((100% - 1120px) / 2));
+}
+
+#rumo-app-preview .vitrine-nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(.75rem, 3vw, 2.25rem);
+  overflow: visible;
+  padding-bottom: 0;
+  white-space: nowrap;
+}
+
+#rumo-app-preview .vitrine-nav a,
+#rumo-app-preview .vitrine-account {
+  color: var(--rp-text, #fff);
+  font: 600 .875rem/1.3 var(--vitrine-sans);
+  text-decoration: none;
+}
+
+#rumo-app-preview .vitrine-account {
+  min-height: 42px;
+  padding: .55rem .9rem;
+  border: 1px solid var(--rp-line);
+  border-radius: 6px;
+  background: transparent;
+}
+
+#rumo-app-preview:is([data-screen="home"], [data-screen="auth"]) .vitrine-nav :is(a, button) {
+  color: var(--vitrine-ink);
+  border-color: var(--vitrine-rule);
+}
+
+#rumo-app-preview .vitrine-nav a:hover {
+  text-decoration: underline;
+  text-underline-offset: .25em;
+}
+
+#rumo-app-preview:not([data-screen="home"]) .vitrine-nav a {
+  display: none;
+}
+
+#rumo-app-preview .vitrine .home-hero {
+  display: grid;
+  grid-template-columns: 1fr 1.13fr;
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4.5rem);
+  max-width: none;
+  padding: clamp(2.5rem, 5vw, 5rem) 0 clamp(2.75rem, 5vw, 4.75rem);
+}
+
+#rumo-app-preview .vitrine h1,
+#rumo-app-preview .vitrine h2 {
+  color: var(--vitrine-ink);
+  font-family: var(--vitrine-display);
+  font-weight: 650;
+}
+
+#rumo-app-preview .vitrine .home-hero h1 {
+  margin: 0;
+  color: var(--vitrine-ink);
+  font-size: clamp(2.625rem, 5vw, 4.6rem);
+  line-height: 1.02;
+  letter-spacing: -.065em;
+}
+
+#rumo-app-preview .vitrine .home-hero h1 em {
+  color: var(--vitrine-accent);
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  font-style: italic;
+}
+
+#rumo-app-preview .vitrine p {
+  color: var(--vitrine-muted);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+#rumo-app-preview .vitrine .lead {
+  max-width: 34ch;
+  margin: 1.5rem 0;
+  font-size: 1.125rem;
+}
+
+#rumo-app-preview .vitrine .vitrine-fine {
+  margin: .7rem 0 0;
+  font-size: .875rem;
+}
+
+#rumo-app-preview .vitrine-button,
+#rumo-app-preview[data-screen="auth"] .ra-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: .75rem 1.15rem;
+  border: 1px solid var(--vitrine-accent);
+  border-radius: 6px;
+  background: var(--vitrine-accent);
+  color: #10200c;
+  font: 650 .9375rem/1.3 var(--vitrine-sans);
+  text-align: center;
+  box-shadow: none;
+}
+
+#rumo-app-preview .vitrine-button:hover,
+#rumo-app-preview[data-screen="auth"] .ra-submit:hover {
+  background: var(--vitrine-accent-hover);
+  color: #10200c;
+}
+
+#rumo-app-preview .vitrine-outline {
+  background: transparent;
+  color: var(--vitrine-accent);
+}
+
+#rumo-app-preview .vitrine :is(.vitrine-steps, .vitrine-interests, .vitrine-faq) {
+  border-top: 1px solid var(--vitrine-rule);
+  padding: clamp(2rem, 4vw, 3.5rem) 0;
+}
+
+#rumo-app-preview .vitrine :is(#how, #acesso) {
+  scroll-margin-top: 100px;
+}
+
+#rumo-app-preview .vitrine h2 {
+  margin: 0 0 1rem;
+  font-size: clamp(2rem, 3.5vw, 3.125rem);
+  line-height: 1.1;
+  letter-spacing: -.04em;
+}
+
+#rumo-app-preview .vitrine h3 {
+  margin: 0 0 .45rem;
+  color: var(--vitrine-ink);
+  font-size: 1.0625rem;
+  line-height: 1.4;
+}
+
+#rumo-app-preview .vitrine-steps ol {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem 2.5rem;
+  padding-left: 1.3rem;
+  margin: 1.5rem 0 0;
+}
+
+#rumo-app-preview .vitrine-steps li::marker {
+  color: var(--vitrine-accent);
+  font-weight: 700;
+}
+
+#rumo-app-preview .vitrine-steps p,
+#rumo-app-preview .vitrine-duo p,
+#rumo-app-preview .vitrine-access p {
+  margin: 0;
+}
+
+#rumo-app-preview .vitrine .ry-topic {
+  background: #121513;
+  color: var(--vitrine-ink);
+  border: 1px solid var(--vitrine-rule);
+  border-radius: 8px;
+  box-shadow: none;
+  transform: none;
+}
+
+#rumo-app-preview .vitrine .ry-topic:hover {
+  border-color: var(--vitrine-accent);
+  background: #222721;
+}
+
+#rumo-app-preview .vitrine .ry-topic :is(i, svg) {
+  color: var(--vitrine-accent);
+}
+
+#rumo-app-preview .vitrine .ry-topic small {
+  color: var(--vitrine-muted);
+  font-size: .875rem;
+}
+
+#rumo-app-preview .vitrine :is(.vitrine-duo, .vitrine-access) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem 2rem;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+#rumo-app-preview .vitrine-duo {
+  background: #e8efec;
+}
+
+#rumo-app-preview .vitrine-access {
+  background: #131715;
+}
+
+#rumo-app-preview .vitrine :is(.vitrine-duo, .vitrine-access) button {
+  flex-shrink: 0;
+}
+
+#rumo-app-preview .vitrine-faq details {
+  border-bottom: 1px solid var(--vitrine-rule);
+  padding: .9rem 0;
+}
+
+#rumo-app-preview .vitrine-faq summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+#rumo-app-preview[data-screen="home"] .rp-foot,
+#rumo-app-preview[data-screen="auth"] .rp-foot {
+  color: var(--vitrine-muted);
+  border-color: var(--vitrine-rule);
+}
+
+#rumo-app-preview[data-screen="auth"] .ra-card {
+  background: var(--panel);
+  border-color: var(--line);
+  border-radius: 10px;
+  box-shadow: none;
+}
+
+#rumo-app-preview[data-screen="auth"] .ra-card h1 {
+  color: var(--vitrine-ink);
+  -webkit-text-fill-color: currentColor;
+  font-family: var(--vitrine-display);
+  font-weight: 650;
+}
+
+#rumo-app-preview[data-screen="auth"] :is(.rp-link, .rp-home-back) {
+  color: var(--vitrine-accent);
+  font-size: .875rem;
+}
+
+#rumo-app-preview :is(.vitrine, .vitrine-nav) :focus-visible {
+  outline: 2px solid var(--vitrine-accent);
+  outline-offset: 4px;
+}
+
+@media (max-width: 800px) {
+  #rumo-app-preview .vitrine .home-hero {
+    grid-template-columns: 1fr;
+  }
+
+
+}
+
+@media (max-width: 600px) {
+  #rumo-app-preview .vitrine-account {
+    padding-inline: .6rem;
+  }
+
+  #rumo-app-preview .vitrine-nav a[href="#acesso"] {
+    display: none;
+  }
+
+  #rumo-app-preview .vitrine-steps ol {
+    grid-template-columns: 1fr;
+  }
+
+  #rumo-app-preview .vitrine :is(.vitrine-duo, .vitrine-access) {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+
+#rumo-app-preview .vitrine .home-hero h1 {
+  font-size: clamp(2.85rem, 5.1vw, 4.9rem);
+  letter-spacing: -.067em;
+  font-weight: 650;
+}
+
+#rumo-app-preview .vitrine .lead { max-width: 40ch; }
+#rumo-app-preview .atlas {
+  --route: #d1ef94;
+  background: #101412;
+  color: #f3f7f0;
+  border: 1px solid #38413b;
+  border-radius: 20px;
+  overflow: hidden;
+  min-width: 0;
+}
+#rumo-app-preview .atlas[data-route="tech"] { --route: #93d2fd; }
+#rumo-app-preview .atlas[data-route="social"] { --route: #deb4fa; }
+#rumo-app-preview .atlas-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.2rem clamp(1rem, 3vw, 2rem);
+  border-bottom: 1px solid #313831;
+  font: 650 clamp(1.15rem, 2vw, 1.5rem)/1.2 system-ui, sans-serif;
+  letter-spacing: -.035em;
+}
+#rumo-app-preview .atlas-heading small,
+#rumo-app-preview .atlas-task small {
+  font: 550 .82rem/1.4 system-ui, sans-serif;
+  letter-spacing: .02em;
+  color: #c1cabe;
+}
+#rumo-app-preview .atlas-routes {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) minmax(135px,1.1fr);
+  padding: 1.5rem clamp(1rem, 3vw, 2rem);
+  background: radial-gradient(ellipse at 22% 50%, #313f2a75, transparent 62%),
+              radial-gradient(circle, #344037 1px, transparent 1.3px) 0 0 / 14px 14px;
+}
+#rumo-app-preview .atlas-tracks { position: relative; min-width: 0; }
+#rumo-app-preview .atlas-tracks > svg { display:block; width:100%; height:180px; }
+#rumo-app-preview .atlas-tracks path { fill:none; stroke:#4e5c53; stroke-width:1.5; vector-effect:non-scaling-stroke; }
+#rumo-app-preview .atlas[data-route="design"] .design,
+#rumo-app-preview .atlas[data-route="tech"] .tech,
+#rumo-app-preview .atlas[data-route="social"] .social {
+  stroke: var(--route);
+  stroke-width: 3;
+}
+#rumo-app-preview .atlas-origin {
+  position:absolute;
+  top:50%; left:10.5%;
+  transform: translate(-50%,-50%);
+  display:grid; place-items:center;
+  width:40px; height:40px;
+  color:var(--route);
+  background:#151c16;
+  border:1px solid var(--route);
+  border-radius:50%;
+  box-shadow:0 0 0 6px #abbca214;
+}
+#rumo-app-preview .atlas-origin svg { width:23px; height:23px; }
+#rumo-app-preview .atlas-options { display:grid; grid-template-rows:repeat(3,54px); gap:9px; }
+#rumo-app-preview .atlas-options button {
+  display:flex; align-items:center; gap:.6rem;
+  border:1px solid #455049; border-radius:9px;
+  background:#191f1c; color:#dce2dc;
+  text-align:left; padding:0 .8rem;
+  font:600 .95rem/1.25 system-ui, sans-serif;
+}
+#rumo-app-preview .atlas-options button svg { width:18px; height:18px; flex:none; }
+#rumo-app-preview .atlas-options button:hover { border-color:#9aa798; }
+#rumo-app-preview .atlas-options [aria-pressed="true"] {
+  background:var(--route); border-color:var(--route); color:#122018;
+}
+#rumo-app-preview .atlas-task {
+  border-top:1px solid #323b34;
+  padding:1.25rem clamp(1rem, 3vw, 2rem);
+  background:#181d19;
+}
+#rumo-app-preview .atlas-task small { color:var(--route); }
+#rumo-app-preview .atlas-task strong { display:block; margin:.45rem 0; font-size:1.3rem; }
+#rumo-app-preview .atlas-task p { margin:0; line-height:1.5; }
+#rumo-app-preview .atlas button:focus-visible { outline-color:white; }
+#rumo-app-preview .vitrine-duo {
+  background: linear-gradient(90deg, #152f39 0%, #152f39ed 48%, #152f3960), url('/rumo-projeto.jpg') center 45% / cover;
+}
+#rumo-app-preview .vitrine-duo :is(h2,p) { color: #fff; }
+#rumo-app-preview .vitrine-duo p { max-width: 46ch; }
+#rumo-app-preview .vitrine-duo button { background: #fff; color: #183d4e; border-color: #fff; }
+@media(max-width: 375px) {
+  #rumo-app-preview .vitrine-nav a { display: none; }
+}
+
+#rumo-app-preview .atlas-example {
+  color: var(--route);
+  display: inline-block;
+  margin-top: .85rem;
+  font-size: .9rem;
+  text-underline-offset: .22em;
+}
+
+#rumo-app-preview .project-gallery,
+#rumo-app-preview .week-sample {
+  border-top: 1px solid var(--vitrine-rule);
+  padding: clamp(2rem, 4vw, 3.5rem) 0;
+}
+
+#rumo-app-preview .project-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1rem, 2vw, 2rem);
+  margin-top: 1.75rem;
+}
+
+#rumo-app-preview .project-grid article { scroll-margin-top: 90px; }
+#rumo-app-preview .project-grid img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+#rumo-app-preview .project-grid small { color: #d1ef94; font-size: .875rem; }
+#rumo-app-preview #projeto-tech small { color: #93d2fd; }
+#rumo-app-preview #projeto-social small { color: #deb4fa; }
+#rumo-app-preview .project-grid h3 { margin: .45rem 0; font-size: 1.32rem; }
+#rumo-app-preview .project-grid summary { cursor: pointer; font-weight: 600; padding: .65rem 0; }
+#rumo-app-preview .project-grid ol { padding-left: 1.4rem; color: var(--vitrine-muted); line-height: 1.65; }
+#rumo-app-preview .project-grid li + li { margin-top: .5rem; }
+#rumo-app-preview .week-sample { display: grid; grid-template-columns: .85fr 1.15fr; gap: clamp(1rem,5vw,5rem); }
+#rumo-app-preview .week-sample dl { margin: 0; }
+#rumo-app-preview .week-sample dl > div { display: grid; grid-template-columns: 6rem 1fr; padding-block: 1rem; border-top: 1px solid var(--vitrine-rule); }
+#rumo-app-preview .week-sample dt { color: #d1ef94; font-weight: 600; }
+#rumo-app-preview .week-sample dd { margin: 0; color: var(--vitrine-muted); line-height: 1.6; }
+#rumo-app-preview .week-sample strong { display: block; color: var(--vitrine-ink); margin-bottom: .3rem; }
+@media(max-width: 720px) {
+  #rumo-app-preview .project-grid, #rumo-app-preview .week-sample { grid-template-columns: 1fr; }
+  #rumo-app-preview .project-grid { gap: 2rem; }
+}
