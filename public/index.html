@@ -1703,6 +1703,7 @@ function homeView(){if(!authUser)return landingView();return `<section class="de
  <section class="demo-progress"><div><h2>Sua semana no Rumo</h2><p>${routeChosen?esc(routes[activeRoute].title):'Escolha uma área para começar seu plano.'}</p></div>
    <div><strong>${routeChosen?routineCount(activeRoute,7):0} de 7 dias registrados</strong><progress aria-label="Atividades registradas na primeira semana" max="7" value="${routeChosen?routineCount(activeRoute,7):0}"></progress></div></section>
   ${youthDashboard()}
+  ${routeChosen&&nextDailyIndex()>=0?`<section class="rp-summary"><h2>Seu passo de hoje</h2><p>${esc(getPlan(activeRoute).days[nextDailyIndex()][0])}</p><button class="rp-button" data-daily="start">Abrir atividade do dia</button></section>`:''}
   <h2 class="explore-tools">Ferramentas da jornada</h2>
   <div class="demo-shortcuts"><button data-demo-view="question">Questionário</button><button data-demo-view="projects">Projetos</button><button data-demo-view="duo">Missão em dupla</button><button data-demo-view="mentor">Mentor</button><button data-demo-view="guide">Guia do aplicativo</button></div></section>`;}
 root.addEventListener('click',event=>{const button=event.target.closest('[data-demo-view]');if(button){if(button.dataset.demoView==='question')resumeQuestions();else if(button.dataset.demoView==='routine'&&!routeChosen)navigate('routines');else navigate(button.dataset.demoView);}});
