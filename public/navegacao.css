@@ -36,3 +36,24 @@
   #rumo-app-preview#rumo-app-preview { --menu-header-height: 64px; }
   #rumo-app-preview .vitrine-nav a { display: none; }
 }
+
+#rumo-app-preview .rp-header > .site-home-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 .75rem;
+  border: 1px solid var(--rp-line);
+  border-radius: 8px;
+  color: var(--rp-text);
+  font: 600 .9rem/1.2 system-ui, sans-serif;
+  text-decoration: none;
+  white-space: nowrap;
+}
+#rumo-app-preview .site-home-link:hover { text-decoration: underline; }
+#rumo-app-preview .site-home-link:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+#rumo-app-preview[data-screen="home"] .site-home-link:has(+ .vitrine-nav) { display: none; }
+@media (max-width: 420px) {
+  #rumo-app-preview .rp-header:has(.vitrine-nav) { gap: 4px; padding-inline: 8px; }
+  #rumo-app-preview .rp-header > .site-home-link { padding-inline: .5rem; }
+}
