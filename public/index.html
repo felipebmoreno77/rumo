@@ -2698,8 +2698,8 @@ root.addEventListener('submit',async e=>{
  finally{const pw=form.querySelector('[name=password]');if(pw)pw.value='';authBusy=false;button.disabled=false}
 });
 async function initAuth(){
- view='home';render();
- try{const r=await authCall('session');if(view!=='auth'){await acceptUser(r.user);if(appLicense?.allowed===true){const topic=new URLSearchParams(location.search).get('tema');if(topic&&Object.hasOwn(youthTopics,topic)){youth.topic=topic;interestFocus=youthTopics[topic].label;}const destination=location.hash.slice(1);if(destination==='admin'){await checkPortalAccess();if(portalAdmin){navigate('admin');void loadPortal();}}else if(['question','duo','mentor','guide'].includes(destination))navigate(destination);}}}catch{/* A sessão e a licença continuam sendo verificadas no servidor. */}
+ view='home';stage.innerHTML='<p role="status">Carregando seu Rumo…</p>';
+ try{const r=await authCall('session');if(view!=='auth'){await acceptUser(r.user);if(appLicense?.allowed===true){const topic=new URLSearchParams(location.search).get('tema');if(topic&&Object.hasOwn(youthTopics,topic)){youth.topic=topic;interestFocus=youthTopics[topic].label;}const destination=location.hash.slice(1);if(destination==='admin'){await checkPortalAccess();if(portalAdmin){navigate('admin');void loadPortal();}}else if(['question','duo','mentor','guide'].includes(destination))navigate(destination);}}}catch{render(); /* Permite entrar novamente caso a sessão tenha expirado. */}
 }
 
 let authChecking=false;
