@@ -52,8 +52,23 @@
 }
 #rumo-app-preview .site-home-link:hover { text-decoration: underline; }
 #rumo-app-preview .site-home-link:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
-#rumo-app-preview[data-screen="home"] .site-home-link:has(+ .vitrine-nav) { display: none; }
 @media (max-width: 420px) {
   #rumo-app-preview .rp-header:has(.vitrine-nav) { gap: 4px; padding-inline: 8px; }
   #rumo-app-preview .rp-header > .site-home-link { padding-inline: .5rem; }
 }
+
+#rumo-app-preview .drawer-home-link {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  min-height: 48px;
+  margin-bottom: .5rem;
+  padding: .65rem .85rem;
+  border-bottom: 1px solid var(--rp-line);
+  color: var(--rp-text);
+  font: 650 1rem/1.4 system-ui, sans-serif;
+  text-decoration: none;
+}
+#rumo-app-preview .drawer-home-link svg { width: 20px; height: 20px; }
+#rumo-app-preview .drawer-home-link:hover { text-decoration: underline; }
+#rumo-app-preview .drawer-home-link:focus-visible { outline: 2px solid currentColor; }
