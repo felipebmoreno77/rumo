@@ -11,6 +11,7 @@ function prepare(){
  const assets={[hash]:{bytes,type:'text/html; charset=utf-8'}},manifest={'/index.html':{hash,size:bytes.length}};
  for(const [name,type] of [['favicon.svg','image/svg+xml'],['favicon.ico','image/x-icon'],['favicon-32x32.png','image/png'],['apple-touch-icon.png','image/png'],
   ['navegacao.css','text/css'],
+  ['profundidade.css','text/css'],
   ['rumo-app.css','text/css'],
   ['rumo-vitrine.css','text/css'],
   ['rumo-projeto.jpg','image/jpeg'],
