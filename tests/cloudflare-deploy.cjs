@@ -11,7 +11,7 @@ test('publicação inclui apenas arquivos públicos permitidos, preservando a au
  };
  const result=await deploy({token:'test-only-not-a-credential',fetcher,prepared});
  assert.equal(result.deployment,'test-deployment');assert.equal(calls.length,3);
- assert.deepEqual(Object.keys(JSON.parse(calls[0].options.body).manifest),['/index.html','/favicon.svg','/favicon.ico','/favicon-32x32.png','/apple-touch-icon.png','/navegacao.css','/profundidade.css','/rumo-app.css','/rumo-vitrine.css','/rumo-projeto.jpg','/projeto-discos.jpg','/projeto-educacao.jpg','/projeto-tecnologia.jpg']);
+ assert.deepEqual(Object.keys(JSON.parse(calls[0].options.body).manifest),['/index.html','/favicon.svg','/favicon.ico','/favicon-32x32.png','/apple-touch-icon.png','/navegacao.css','/profundidade.css','/rumo-design.css','/fonts/instrument-serif-italic.ttf','/fonts/OFL.txt','/rumo-app.css','/rumo-vitrine.css','/rumo-projeto.jpg','/projeto-discos.jpg','/projeto-educacao.jpg','/projeto-tecnologia.jpg']);
  assert.equal(calls[1].options.headers.Authorization,'Bearer upload-example');
  for(const [hash,asset] of Object.entries(prepared.assets)){const blob=calls[1].options.body.get(hash);assert.deepEqual(Buffer.from(await blob.text(),'base64'),asset.bytes);assert.equal(blob.type,asset.type);}
  const meta=JSON.parse(await calls[2].options.body.get('metadata').text());
